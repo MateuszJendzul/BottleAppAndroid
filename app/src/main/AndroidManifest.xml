@@ -21,6 +21,7 @@
         // added so that app won't collapse, add activity everytime when you add new layout
         <activity android:name=".ProfileSetupScreen"/>
         <activity android:name=".ProfileScreen"/>
+        <activity android:name=".FilterSetup"/>
     </application>
 
 </manifest>

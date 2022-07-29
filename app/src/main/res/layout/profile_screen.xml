@@ -4,8 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#57A1B8">
+    android:background="#57A1B8"
+    tools:context=".ProfileScreen">
 
+
+    <TextView
+        android:id="@+id/setupMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="setupMessage"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/profileTime"
@@ -51,57 +68,72 @@
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/setupProfileName"
+        android:id="@+id/profileScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="profileNameText"
+        android:layout_marginTop="20dp"
+        android:text="profileScreenName"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.286"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/weightText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="weightText"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/setupProfileName"
+        app:layout_constraintTop_toBottomOf="@+id/setupMessage"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/filterEfficiencyText"
+        android:id="@+id/profileScreenWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="filterEfficiencyText"
+        android:text="profileScreenWeight"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/bottleCapacityText"
+        app:layout_constraintTop_toBottomOf="@+id/profileScreenName"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/bottleCapacityText"
+        android:id="@+id/profileScreenFilterEfficiency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="bottleCapacityText"
+        android:text="profileScreenFilterEfficiency"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weightText"
+        app:layout_constraintTop_toBottomOf="@+id/profileScreenBottleCapacity"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/filterStartDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="filterStartDate"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileScreenFilterEfficiency"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/profileScreenBottleCapacity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="profileScreenBottleCapacity"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileScreenWeight"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 
@@ -109,14 +141,13 @@
         android:id="@+id/daysToChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="30dp"
         android:text="daysToChange"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterEfficiencyText"
+        app:layout_constraintTop_toBottomOf="@+id/filterStartDate"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 

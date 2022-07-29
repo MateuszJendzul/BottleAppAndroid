@@ -15,54 +15,55 @@ public class MainActivity extends AppCompatActivity {
     //creates a tag for class
     private static final String TAG = "MainActivity";
 
-    TextView welcomeText, profileSetupText, showProfileText, mainTime, mainDate;
+    TextView welcomeText, profileSetupText, showProfileText, mainTimeText, mainDateText, alarmNotificationsText;
     Button profileEditButton, showProfileButton, showProfileButtonToast;
-    static boolean enableShowProfileButton = false;
+    protected static boolean enableShowProfileButton = false;
+    DateAndTime dateAndTime = new DateAndTime();
 
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
-        // Log.d tags a message to method, so it will pop up in a log screen every time we call this method
-        //  with custom text "Starting"
+        //Log.d tags a message to method, so it will pop up in a log screen every time we call this method
+        // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
 
-        DateAndTime dateAndTime = new DateAndTime();
+        //make new button/text object using previously setup id
+        profileEditButton = (Button) findViewById(R.id.profileEditButton);
+        showProfileButton = (Button) findViewById(R.id.showProfileButton);
+        showProfileButtonToast = (Button) findViewById(R.id.showProfileButtonToast);
+        welcomeText = (TextView) findViewById(R.id.welcomeText);
+        profileSetupText = (TextView) findViewById(R.id.profileSetupText);
+        showProfileText = (TextView) findViewById(R.id.showProfileText);
+        mainTimeText = (TextView) findViewById(R.id.time);
+        mainDateText = (TextView) findViewById(R.id.date);
+        alarmNotificationsText = (TextView) findViewById(R.id.alarmNotificationsText);
 
-        // make new button object using previously setup id
-        profileEditButton =  findViewById(R.id.profileEditButton);
-        showProfileButton =  findViewById(R.id.showProfileButton);
-        showProfileButtonToast = findViewById(R.id.showProfileButtonToast);
-
-        // make new text object using previously setup id
-        welcomeText = findViewById(R.id.welcomeText);
-        profileSetupText = findViewById(R.id.profileSetupText);
-        showProfileText = findViewById(R.id.showProfileText);
-        mainTime = findViewById(R.id.time);
-        mainDate = findViewById(R.id.date);
-
+        //TODO set alarm messages
+        alarmNotificationsText.setText("");
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
         showProfileText.setText("Show profile:");
-        mainTime.setText(dateAndTime.getTime());
-        mainDate.setText(dateAndTime.getDate());
+        mainTimeText.setText(dateAndTime.getTime());
+        mainDateText.setText(dateAndTime.getDate());
 
-        // puts transparent button on top of inactive profile button
-        //  which is supposed to only show toast message and deactivate it
-        //  when profile button becomes active
+        //puts transparent button on top of inactive profile button
+        // which is supposed to only show toast message and deactivate it
+        // when profile button becomes active
         showProfileButton.setEnabled(false);
         if (enableShowProfileButton) {
             showProfileButtonToast.setEnabled(false);
             showProfileButton.setEnabled(true);
         }
 
-        // make event when button does something when clicked
+        //make event when button does something when clicked
         profileEditButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            // on button click
+            //on button click
             public void onClick(View view) {
                 Log.d(TAG, "onClick: profileEditButton");
-                openProfileSetupScreen();
+                Intent profileEditButtonIntent = new Intent(MainActivity.this, ProfileSetupScreen.class);
+                startActivity(profileEditButtonIntent);
             }
         });
 
@@ -71,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (enableShowProfileButton) {
                     Log.d(TAG, "onClick: showProfileButton(active)");
-                    Intent intent = new Intent(MainActivity.this, ProfileScreen.class);
-                    startActivity(intent);
+                    Intent showProfileButtonIntent = new Intent(MainActivity.this, ProfileScreen.class);
+                    startActivity(showProfileButtonIntent);
                 }
             }
         });
@@ -81,23 +82,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClick: showProfileButton(inactive - toast)");
-                showToast("Update your profile");
+                //shows little pop up on screen with custom text
+                Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
             }
         });
-
     }
-
-    public void openProfileSetupScreen(){
-        // change to new layout
-        //  to make it work go to AndroidManifest and read comments
-        Intent intent = new Intent(MainActivity.this, ProfileSetupScreen.class);
-        startActivity(intent);
-    }
-
-    public void showToast(String text) {
-        Toast.makeText(MainActivity.this, text, Toast.LENGTH_SHORT).show();
-    }
-
 }
-
-//TODO find a solution to pass data between activities
