@@ -28,11 +28,18 @@ public class DateAndTime extends AppCompatActivity {
         return year;
     }
 
+    /**
+     * Returns actual time of the day using java.util.Calendar.
+     */
     public String getTime() {
         return timeHours + ":" + timeMinutes;
     }
 
-    public String getDate(){
+    /**
+     * Returns actual date using java.util.Calendar.
+     * If number representing month is one digital, adds 0 to make it two-digit.
+     */
+    public String getDate() {
         if (getMonth() < 9) {
             return getDay() + ".0" + getMonth() + "." + getYear();
         } else {

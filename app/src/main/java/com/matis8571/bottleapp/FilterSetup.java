@@ -74,7 +74,7 @@ public class FilterSetup extends AppCompatActivity {
                         Integer.parseInt(filterStartMonthEdit.getText().toString()) <= 12) {
                     submitFilterButtonToast.setEnabled(false);
                     submitFilterButton.setEnabled(true);
-                    Toast.makeText(FilterSetup.this, "Update now", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FilterSetup.this, "Submit now", Toast.LENGTH_SHORT).show();
                 } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) > 31 ||
                         Integer.parseInt(filterStartMonthEdit.getText().toString()) > 12) {
                     Toast.makeText(FilterSetup.this, "Day or month exceeds its max value",

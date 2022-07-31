@@ -50,21 +50,21 @@ public class ProfileScreen extends AppCompatActivity {
         //to receive values from other activity make new corresponding variable and assign it to
         // a name of variable which was previously send to Editor "weightString" you can then add
         // default value set to variables defaults
-        String weightString = userProfilePrefsReceiver.getString("weightString", null);
-        String bottleCapacityString = userProfilePrefsReceiver.getString("bottleCapacityString", null);
-        String filterEfficiencyString = userProfilePrefsReceiver.getString("filterEfficiencyString", null);
-        String profileNameString = userProfilePrefsReceiver.getString("profileNameString", null);
+        int weight = userProfilePrefsReceiver.getInt("weight", 0);
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
+        String profileName = userProfilePrefsReceiver.getString("profileName", null);
         String filterDay = filterPrefsReceiver.getString("filterDay", null);
         String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
         savedDay = Integer.parseInt(filterDay);
 
-        weightText.setText("Weight: " + weightString + " kg");
-        bottleCapacityText.setText("Bottle capacity: " + bottleCapacityString + " ml");
-        filterEfficiencyText.setText("Filter efficiency: " + filterEfficiencyString + " l");
-        profileNameText.setText("Name: " + profileNameString);
-        filterStartDateText.setText("Filter start: " + filterStartDateAutoString());
+        weightText.setText("Weight: " + weight + " kg");
+        bottleCapacityText.setText("Bottle capacity: " + bottleCapacity + " ml");
+        filterEfficiencyText.setText("Filter efficiency: " + filterEfficiency + " l");
+        profileNameText.setText("Name: " + profileName);
+        filterStartDateText.setText("Filter start: " + filterStartDateString());
         setupMessageText.setText("Profile:");
         profileTimeText.setText(dateAndTime.getTime());
         profileDateText.setText(dateAndTime.getDate());
@@ -88,7 +88,9 @@ public class ProfileScreen extends AppCompatActivity {
         });
     }
 
-    //method called to initiate every Check Method at once
+    /**
+     * Method called to initiate every Check Method at once
+     */
     public void check() {
         countingDaysToMaxEfficiency();
 //        countingWaterToMaxEfficiency();
@@ -106,7 +108,10 @@ public class ProfileScreen extends AppCompatActivity {
         return savedYear;
     }
 
-    //CM call to check if current day equals X, if false adds 1 to daysCounter and sets to true to reset for today
+    /**
+     * CM(Check Method) checks if current day equals X, if false adds 1 to daysCounter
+     * and then is set to true to reset for today
+     */
     private void countingDaysToMaxEfficiency() {
         if (x != dateAndTime.getDay()) {
             daysCounter = daysCounter + 1;
@@ -114,7 +119,10 @@ public class ProfileScreen extends AppCompatActivity {
         }
     }
 
-    private String filterStartDateAutoString() {
+    /**
+     * Displays date in dd/mm/yyyy format using previously saved user input in FilterSetup.java
+     */
+    private String filterStartDateString() {
         return savedDay + "." + savedMonth + "." + savedYear;
     }
 }
