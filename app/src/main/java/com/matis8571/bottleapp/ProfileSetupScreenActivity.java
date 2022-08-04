@@ -17,7 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.regex.Pattern;
 
-public class ProfileSetupScreen extends AppCompatActivity {
+public class ProfileSetupScreenActivity extends AppCompatActivity {
     private static final String TAG = "ProfileSetupScreen";
 
     TextView setupMessageText, profileSetupTimeText, profileSetupDateText;
@@ -56,7 +56,7 @@ public class ProfileSetupScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: setupToMainButton");
-                Intent setupToMainButtonIntent = new Intent(ProfileSetupScreen.this, MainActivity.class);
+                Intent setupToMainButtonIntent = new Intent(ProfileSetupScreenActivity.this, MainActivity.class);
                 startActivity(setupToMainButtonIntent);
             }
         });
@@ -70,7 +70,7 @@ public class ProfileSetupScreen extends AppCompatActivity {
                         filterEfficiencyEdit.getText().toString().isEmpty()
                 ) {
                     Log.d(TAG, "onClick: submitButton (empty fields)");
-                    Toast.makeText(ProfileSetupScreen.this, "Empty fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileSetupScreenActivity.this, "Empty fields", Toast.LENGTH_SHORT).show();
 
                 } else {
                     Log.d(TAG, "onClick: submitButton");
@@ -81,13 +81,13 @@ public class ProfileSetupScreen extends AppCompatActivity {
                     String profileName = nameEdit.getText().toString();
 
                     if (weight < 0 || weight > 150) {
-                        Toast.makeText(ProfileSetupScreen.this, "Incorrect weight!\n0 - 150kg", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileSetupScreenActivity.this, "Incorrect weight!\n0 - 150kg", Toast.LENGTH_SHORT).show();
                     } else if (bottleCapacity < 0 || bottleCapacity > 5000) {
-                        Toast.makeText(ProfileSetupScreen.this, "Incorrect bottle capacity!\n0 - 5000ml", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileSetupScreenActivity.this, "Incorrect bottle capacity!\n0 - 5000ml", Toast.LENGTH_SHORT).show();
                     } else if (filterEfficiency < 0 || filterEfficiency > 300) {
-                        Toast.makeText(ProfileSetupScreen.this, "Incorrect filter efficiency!\n0 - 300l", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileSetupScreenActivity.this, "Incorrect filter efficiency!\n0 - 300l", Toast.LENGTH_SHORT).show();
                     } else if (isNumeric(profileName)) {
-                        Toast.makeText(ProfileSetupScreen.this, "Name contain numbers!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileSetupScreenActivity.this, "Name contain numbers!", Toast.LENGTH_SHORT).show();
                     } else {
                         //create SharedPreferences.Editor and assigns previously created SharedPreferences variable to it
                         SharedPreferences.Editor userProfilePrefsEditor = userProfilePrefs.edit();
@@ -102,7 +102,7 @@ public class ProfileSetupScreen extends AppCompatActivity {
 
                         //in order to make boolean work as intended use reference to class not class instance
                         MainActivity.enableShowProfileButton = true;
-                        Toast.makeText(ProfileSetupScreen.this, "Profile updated", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ProfileSetupScreenActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -114,7 +114,7 @@ public class ProfileSetupScreen extends AppCompatActivity {
                 Log.d(TAG, "onClick: setupToFilterSetupButton");
 
                 Intent setupToFilterSetupButtonIntent = new Intent(
-                        ProfileSetupScreen.this, FilterSetup.class);
+                        ProfileSetupScreenActivity.this, FilterSetupActivity.class);
                 startActivity(setupToFilterSetupButtonIntent);
             }
         });

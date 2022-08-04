@@ -14,14 +14,13 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         // added so that app won't collapse, add activity everytime when you add new layout
-        <activity android:name=".ProfileSetupScreen"/>
-        <activity android:name=".ProfileScreen"/>
-        <activity android:name=".FilterSetup"/>
+        <activity android:name=".ProfileSetupScreenActivity"/>
+        <activity android:name=".ProfileScreenActivity"/>
+        <activity android:name=".FilterSetupActivity"/>
     </application>
 
 </manifest>

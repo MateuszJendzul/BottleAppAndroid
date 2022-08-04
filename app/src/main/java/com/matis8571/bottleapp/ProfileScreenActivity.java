@@ -13,7 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class ProfileScreen extends AppCompatActivity {
+public class ProfileScreenActivity extends AppCompatActivity {
     private final String TAG = "ProfileScreen";
 
     TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText, profileTimeText,
@@ -82,7 +82,7 @@ public class ProfileScreen extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: Clicked: setupToMainButton");
-                Intent showToMainButtonIntent = new Intent(ProfileScreen.this, MainActivity.class);
+                Intent showToMainButtonIntent = new Intent(ProfileScreenActivity.this, MainActivity.class);
                 startActivity(showToMainButtonIntent);
             }
         });

@@ -102,6 +102,22 @@
         tools:ignore="HardcodedText" />
 
     <Button
+        android:id="@+id/test"
+        android:layout_width="80dp"
+        android:layout_height="48dp"
+        android:text="test"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:backgroundTint="@color/button_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.931"
+        tools:ignore="HardcodedText,UsingOnClickInXml" />
+
+    <Button
         android:id="@+id/showProfileButton"
         android:layout_width="80dp"
         android:layout_height="48dp"

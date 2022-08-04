@@ -15,8 +15,8 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class FilterSetup extends AppCompatActivity {
-    private final String TAG = "ProfileScreen";
+public class FilterSetupActivity extends AppCompatActivity {
+    private static final String TAG = "ProfileScreen";
 
     TextView filterMessageText;
     EditText filterStartDayEdit, filterStartMonthEdit;
@@ -56,7 +56,7 @@ public class FilterSetup extends AppCompatActivity {
                 filterPrefsEditor.putInt("savedYear", savedYear);
                 filterPrefsEditor.apply();
 
-                Toast.makeText(FilterSetup.this, "Filter updated", Toast.LENGTH_SHORT).show();
+                Toast.makeText(FilterSetupActivity.this, "Filter updated", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -69,15 +69,15 @@ public class FilterSetup extends AppCompatActivity {
                 // fields doesn't exceed set values disables submitFilterButtonToast button and enables
                 // submitFilterButton and allows to upload input data, but if one exceeds, shows Toast
                 if (filterStartDayEdit.getText().toString().isEmpty() && filterStartMonthEdit.getText().toString().isEmpty()) {
-                    Toast.makeText(FilterSetup.this, "Empty fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FilterSetupActivity.this, "Empty fields", Toast.LENGTH_SHORT).show();
                 } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) <= 31 &&
                         Integer.parseInt(filterStartMonthEdit.getText().toString()) <= 12) {
                     submitFilterButtonToast.setEnabled(false);
                     submitFilterButton.setEnabled(true);
-                    Toast.makeText(FilterSetup.this, "Submit now", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(FilterSetupActivity.this, "Submit now", Toast.LENGTH_SHORT).show();
                 } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) > 31 ||
                         Integer.parseInt(filterStartMonthEdit.getText().toString()) > 12) {
-                    Toast.makeText(FilterSetup.this, "Day or month exceeds its max value",
+                    Toast.makeText(FilterSetupActivity.this, "Day or month exceeds its max value",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -88,7 +88,7 @@ public class FilterSetup extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: filterToMainButton");
                 Intent filterToMainButtonIntent = new Intent(
-                        FilterSetup.this, ProfileSetupScreen.class);
+                        FilterSetupActivity.this, ProfileSetupScreenActivity.class);
                 startActivity(filterToMainButtonIntent);
             }
         });
@@ -98,7 +98,7 @@ public class FilterSetup extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d(TAG, "onClick: filterSetupToMainButton");
                 Intent filterSetupToMainButtonIntent = new Intent(
-                        FilterSetup.this, MainActivity.class);
+                        FilterSetupActivity.this, MainActivity.class);
                 startActivity(filterSetupToMainButtonIntent);
             }
         });

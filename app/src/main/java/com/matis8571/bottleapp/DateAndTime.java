@@ -1,19 +1,26 @@
 package com.matis8571.bottleapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
 
 public class DateAndTime extends AppCompatActivity {
-    private int day, month, year, timeHours, timeMinutes;
+    private int day, month, year, timeHour, timeMinute;
     Calendar calendar = Calendar.getInstance();
 
     public DateAndTime() {
         day = calendar.get(Calendar.DAY_OF_MONTH);
         month = calendar.get(Calendar.MONTH) + 1;
         year = calendar.get(Calendar.YEAR);
-        timeHours = calendar.get(Calendar.HOUR_OF_DAY);
-        timeMinutes = calendar.get(Calendar.MINUTE);
+        timeHour = calendar.get(Calendar.HOUR_OF_DAY);
+        timeMinute = calendar.get(Calendar.MINUTE);
     }
 
     public int getDay() {
@@ -32,7 +39,7 @@ public class DateAndTime extends AppCompatActivity {
      * Returns actual time of the day using java.util.Calendar.
      */
     public String getTime() {
-        return timeHours + ":" + timeMinutes;
+        return timeHour + ":" + timeMinute;
     }
 
     /**
@@ -47,7 +54,8 @@ public class DateAndTime extends AppCompatActivity {
         }
     }
 
+    @NonNull
     public String toString() {
-        return timeHours + ":" + timeMinutes + ", " + day + "." + month + "." + year;
+        return "Time and date: " + timeHour + ":" + timeMinute + ", " + day + "." + month + "." + year;
     }
 }

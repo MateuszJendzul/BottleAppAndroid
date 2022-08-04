@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#57A1B8"
-    tools:context=".FilterSetup">
+    tools:context=".FilterSetupActivity">
 
     <Button
         android:id="@+id/filterSetupBackButton"

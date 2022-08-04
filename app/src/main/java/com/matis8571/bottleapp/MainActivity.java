@@ -1,6 +1,7 @@
 package com.matis8571.bottleapp;
 
 import android.annotation.SuppressLint;
+import android.app.Notification;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,15 +11,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
+import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
 
 public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";
 
     TextView welcomeText, profileSetupText, showProfileText, mainTimeText, mainDateText, alarmNotificationsText;
-    Button profileEditButton, showProfileButton, showProfileButtonToast;
-    protected static boolean enableShowProfileButton = false;
+    Button profileEditButton, showProfileButton, showProfileButtonToast, test;
     DateAndTime dateAndTime = new DateAndTime();
+    protected static boolean enableShowProfileButton = false;
+    private NotificationManagerCompat notificationManager;
 
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +34,13 @@ public class MainActivity extends AppCompatActivity {
         //Log.d tags a message to method, so it will pop up in a log screen every time we call this method
         // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
+        notificationManager = NotificationManagerCompat.from(this);
 
         //make new button/text object using previously setup id
         profileEditButton = (Button) findViewById(R.id.profileEditButton);
         showProfileButton = (Button) findViewById(R.id.showProfileButton);
         showProfileButtonToast = (Button) findViewById(R.id.showProfileButtonToast);
+        test = (Button) findViewById(R.id.test);
         welcomeText = (TextView) findViewById(R.id.welcomeText);
         profileSetupText = (TextView) findViewById(R.id.profileSetupText);
         showProfileText = (TextView) findViewById(R.id.showProfileText);
@@ -62,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             //on button click
             public void onClick(View view) {
                 Log.d(TAG, "onClick: profileEditButton");
-                Intent profileEditButtonIntent = new Intent(MainActivity.this, ProfileSetupScreen.class);
+                Intent profileEditButtonIntent = new Intent(MainActivity.this, ProfileSetupScreenActivity.class);
                 startActivity(profileEditButtonIntent);
             }
         });
@@ -72,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (enableShowProfileButton) {
                     Log.d(TAG, "onClick: showProfileButton(active)");
-                    Intent showProfileButtonIntent = new Intent(MainActivity.this, ProfileScreen.class);
+                    Intent showProfileButtonIntent = new Intent(MainActivity.this, ProfileScreenActivity.class);
                     startActivity(showProfileButtonIntent);
                 }
             }
@@ -86,5 +95,46 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
             }
         });
+
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendOnChannel1();
+            }
+        });
+    }
+
+    /**
+     * Builds new notification pop up message with custom properties (Title, Test and Icon required)
+     * on previously set channels. Then calls NotificationManagerCompat with .notify to call for a
+     * notification pop up.
+     */
+    public void sendOnChannel1() {
+        String title = "title";
+        String message = "message";
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                .build();
+
+        notificationManager.notify(1, notification);
+    }
+
+    public void sendOnChannel2() {
+        String title = "title";
+        String message = "message";
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .build();
+
+        notificationManager.notify(2, notification);
     }
 }
