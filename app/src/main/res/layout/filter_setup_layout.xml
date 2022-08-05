@@ -7,6 +7,21 @@
     android:background="#57A1B8"
     tools:context=".FilterSetupActivity">
 
+    <TextView
+        android:id="@+id/userSetDaysToChangeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:text="userSetDaysToChangeMessage"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
+
     <Button
         android:id="@+id/filterSetupBackButton"
         android:layout_width="wrap_content"
@@ -51,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterStartDay"
+        app:layout_constraintTop_toBottomOf="@+id/filterStartDayInput"
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="HardcodedText,DuplicateClickableBoundsCheck" />
 
@@ -67,7 +82,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterStartDay"
+        app:layout_constraintTop_toBottomOf="@+id/filterStartDayInput"
         app:layout_constraintVertical_bias="1.0"
         tools:ignore="HardcodedText" />
 
@@ -102,11 +117,11 @@
         tools:ignore="HardcodedText" />
 
     <TextView
-        android:id="@+id/filterMessage"
+        android:id="@+id/filterDateSetupMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:text="filterMessage"
+        android:layout_marginTop="50dp"
+        android:text="filterDateSetupMessage"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -118,8 +133,8 @@
         tools:ignore="HardcodedText" />
 
     <EditText
-        android:id="@+id/filterStartDay"
-        android:layout_width="120dp"
+        android:id="@+id/filterStartDayInput"
+        android:layout_width="80dp"
         android:layout_height="48dp"
         android:layout_marginStart="60dp"
         android:layout_marginTop="20dp"
@@ -133,13 +148,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterMessage"
+        app:layout_constraintTop_toBottomOf="@+id/filterDateSetupMessage"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 
     <EditText
-        android:id="@+id/filterStartMonth"
-        android:layout_width="120dp"
+        android:id="@+id/filterDaysToChangeInput"
+        android:layout_width="80dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:hint="Days"
+        android:importantForAutofill="no"
+        android:inputType="number"
+        android:text=""
+        android:textColorHint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userSetDaysToChangeMessage"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/filterStartMonthInput"
+        android:layout_width="80dp"
         android:layout_height="48dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="60dp"
@@ -153,7 +187,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filterMessage"
+        app:layout_constraintTop_toBottomOf="@+id/filterDateSetupMessage"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 </androidx.constraintlayout.widget.ConstraintLayout>

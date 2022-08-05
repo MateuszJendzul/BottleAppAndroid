@@ -2,7 +2,9 @@ package com.matis8571.bottleapp;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView welcomeText, profileSetupText, showProfileText, mainTimeText, mainDateText, alarmNotificationsText;
     Button profileEditButton, showProfileButton, showProfileButtonToast, test;
+    private int daysCounter, x, userChangeAfterDays;
     DateAndTime dateAndTime = new DateAndTime();
     protected static boolean enableShowProfileButton = false;
     private NotificationManagerCompat notificationManager;
@@ -30,11 +33,12 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
+        setContentView(R.layout.main_activity_screen);
         //Log.d tags a message to method, so it will pop up in a log screen every time we call this method
         // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
         notificationManager = NotificationManagerCompat.from(this);
+        check();
 
         //make new button/text object using previously setup id
         profileEditButton = (Button) findViewById(R.id.profileEditButton);
@@ -55,6 +59,15 @@ public class MainActivity extends AppCompatActivity {
         showProfileText.setText("Show profile:");
         mainTimeText.setText(dateAndTime.getTime());
         mainDateText.setText(dateAndTime.getDate());
+
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        mainPrefsEditor.putInt("daysCounter", daysCounter);
+        mainPrefsEditor.apply();
+
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
 
         //puts transparent button on top of inactive profile button
         // which is supposed to only show toast message and deactivate it
@@ -99,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         test.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendOnChannel1();
+                notificationCh1Days();
             }
         });
     }
@@ -109,9 +122,10 @@ public class MainActivity extends AppCompatActivity {
      * on previously set channels. Then calls NotificationManagerCompat with .notify to call for a
      * notification pop up.
      */
-    public void sendOnChannel1() {
-        String title = "title";
-        String message = "message";
+    //sends notification about how many days left till previously setup (by user) days cap
+    public void notificationCh1Days() {
+        String title = "BottleApp";
+        String message = (userChangeAfterDays - daysCounter) + " days left to filter change.";
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification)
@@ -124,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(1, notification);
     }
 
-    public void sendOnChannel2() {
+    public void notificationCh2Quantity() {
         String title = "title";
         String message = "message";
 
@@ -137,4 +151,24 @@ public class MainActivity extends AppCompatActivity {
 
         notificationManager.notify(2, notification);
     }
+
+    /**
+     * Method called to initiate every Check Method at once
+     */
+    public void check() {
+        countingDaysToMaxEfficiency();
+//        countingWaterToMaxEfficiency();
+    }
+
+    /**
+     * CM(Check Method) checks if current day equals X, if false adds 1 to daysCounter
+     * and then is set to true to reset for today
+     */
+    private void countingDaysToMaxEfficiency() {
+        if (x != dateAndTime.getDay()) {
+            daysCounter = daysCounter + 1;
+            x = dateAndTime.getDay();
+        }
+    }
+
 }

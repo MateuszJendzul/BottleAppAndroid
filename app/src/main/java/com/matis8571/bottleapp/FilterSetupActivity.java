@@ -18,8 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class FilterSetupActivity extends AppCompatActivity {
     private static final String TAG = "ProfileScreen";
 
-    TextView filterMessageText;
-    EditText filterStartDayEdit, filterStartMonthEdit;
+    TextView filterDateSetupText, userSetDaysToChangeMessage;
+    EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit;
     Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton;
     DateAndTime dateAndTime = new DateAndTime();
 
@@ -27,18 +27,21 @@ public class FilterSetupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.filter_layout);
+        setContentView(R.layout.filter_setup_layout);
         Log.d(TAG, "onCreate: Starting");
 
         submitFilterButtonToast = (Button) findViewById(R.id.submitFilterButtonToast);
         filterSetupToMainButton = (Button) findViewById(R.id.filterSetupToMainButton);
         filterSetupBackButton = (Button) findViewById(R.id.filterSetupBackButton);
         submitFilterButton = (Button) findViewById(R.id.submitFilterButton);
-        filterMessageText = (TextView) findViewById(R.id.filterMessage);
-        filterStartDayEdit = (EditText) findViewById(R.id.filterStartDay);
-        filterStartMonthEdit = (EditText) findViewById(R.id.filterStartMonth);
+        userSetDaysToChangeMessage = (TextView) findViewById(R.id.userSetDaysToChangeMessage);
+        filterDateSetupText = (TextView) findViewById(R.id.filterDateSetupMessage);
+        filterStartDayEdit = (EditText) findViewById(R.id.filterStartDayInput);
+        filterStartMonthEdit = (EditText) findViewById(R.id.filterStartMonthInput);
+        filterDaysToChangeEdit = (EditText) findViewById(R.id.filterDaysToChangeInput);
 
-        filterMessageText.setText("Filter usage start date:");
+        userSetDaysToChangeMessage.setText("Filter change after:");
+        filterDateSetupText.setText("Filter start date:");
 
         submitFilterButton.setEnabled(false);
         submitFilterButton.setOnClickListener(new View.OnClickListener() {
@@ -47,12 +50,14 @@ public class FilterSetupActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: submitFilterButton");
                 String filterDay = filterStartDayEdit.getText().toString();
                 String filterMonth = filterStartMonthEdit.getText().toString();
+                int userChangeAfterDays = Integer.parseInt(filterDaysToChangeEdit.getText().toString());
                 int savedYear = dateAndTime.getYear();
 
                 SharedPreferences filterPrefs = getSharedPreferences("filterPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor filterPrefsEditor = filterPrefs.edit();
                 filterPrefsEditor.putString("filterDay", filterDay);
                 filterPrefsEditor.putString("filterMonth", filterMonth);
+                filterPrefsEditor.putInt("userChangeAfterDays", userChangeAfterDays);
                 filterPrefsEditor.putInt("savedYear", savedYear);
                 filterPrefsEditor.apply();
 
@@ -68,7 +73,8 @@ public class FilterSetupActivity extends AppCompatActivity {
                 //checks if user input fields are empty then if filterStartDayEdit and filterStartMonthEdit
                 // fields doesn't exceed set values disables submitFilterButtonToast button and enables
                 // submitFilterButton and allows to upload input data, but if one exceeds, shows Toast
-                if (filterStartDayEdit.getText().toString().isEmpty() && filterStartMonthEdit.getText().toString().isEmpty()) {
+                if (filterStartDayEdit.getText().toString().isEmpty() || filterStartMonthEdit.getText().toString().isEmpty()
+                || filterDaysToChangeEdit.getText().toString().isEmpty()) {
                     Toast.makeText(FilterSetupActivity.this, "Empty fields", Toast.LENGTH_SHORT).show();
                 } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) <= 31 &&
                         Integer.parseInt(filterStartMonthEdit.getText().toString()) <= 12) {

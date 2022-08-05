@@ -35,7 +35,7 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
         setupToFilterSetupButton = (Button) findViewById(R.id.setupToFilterSetupButton);
         setupToMainButton = (Button) findViewById(R.id.setupToMainButton);
         submitButton = (Button) findViewById(R.id.submitChangesButton);
-        setupMessageText = (TextView) findViewById(R.id.setupMessage);
+        setupMessageText = (TextView) findViewById(R.id.profileMessage);
         profileSetupTimeText = (TextView) findViewById(R.id.profileSetupTime);
         profileSetupDateText = (TextView) findViewById(R.id.profileSetupDate);
         nameEdit = (EditText) findViewById(R.id.setupProfileName);

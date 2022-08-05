@@ -17,9 +17,9 @@ public class ProfileScreenActivity extends AppCompatActivity {
     private final String TAG = "ProfileScreen";
 
     TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText, profileTimeText,
-            profileDateText, setupMessageText, daysToChangeText, filterStartDateText;
+            profileDateText, profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText;
     Button showToMainButton;
-    private int daysCounter, x, savedDay, savedMonth, savedYear;
+    private int savedDay, savedMonth, savedYear;
     DateAndTime dateAndTime = new DateAndTime();
 
     @SuppressLint("SetTextI18n")
@@ -28,17 +28,17 @@ public class ProfileScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_screen);
         Log.d(TAG, "onCreate: Starting");
-        check();
 
         showToMainButton = (Button) findViewById(R.id.showToMainButton);
+        changeAfterDaysText = (TextView) findViewById(R.id.changeAfterDays);
         weightText = (TextView) findViewById(R.id.profileScreenWeight);
         bottleCapacityText = (TextView) findViewById(R.id.profileScreenBottleCapacity);
         filterEfficiencyText = (TextView) findViewById(R.id.profileScreenFilterEfficiency);
         profileNameText = (TextView) findViewById(R.id.profileScreenName);
         profileTimeText = (TextView) findViewById(R.id.profileTime);
         profileDateText = (TextView) findViewById(R.id.profileDate);
-        setupMessageText = (TextView) findViewById(R.id.setupMessage);
-        daysToChangeText = (TextView) findViewById(R.id.daysToChange);
+        profileMessageText = (TextView) findViewById(R.id.profileMessage);
+        daysCounterText = (TextView) findViewById(R.id.daysCounter);
         filterStartDateText = (TextView) findViewById(R.id.filterStartDate);
 
         //to get values from userProfilePrefsEditor create new SharedPreferences object userProfilePrefsReceiver
@@ -47,34 +47,50 @@ public class ProfileScreenActivity extends AppCompatActivity {
                 "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+
         //to receive values from other activity make new corresponding variable and assign it to
         // a name of variable which was previously send to Editor "weightString" you can then add
         // default value set to variables defaults
         int weight = userProfilePrefsReceiver.getInt("weight", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
+        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
         String profileName = userProfilePrefsReceiver.getString("profileName", null);
         String filterDay = filterPrefsReceiver.getString("filterDay", null);
         String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
         savedDay = Integer.parseInt(filterDay);
+        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
+
+        SharedPreferences profilePrefs = getSharedPreferences("profilePrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor profilePrefsEditor = profilePrefs.edit();
+        profilePrefsEditor.putInt("daysCounter", daysCounter);
+        profilePrefsEditor.apply();
 
         weightText.setText("Weight: " + weight + " kg");
         bottleCapacityText.setText("Bottle capacity: " + bottleCapacity + " ml");
         filterEfficiencyText.setText("Filter efficiency: " + filterEfficiency + " l");
         profileNameText.setText("Name: " + profileName);
         filterStartDateText.setText("Filter start: " + filterStartDateString());
-        setupMessageText.setText("Profile:");
+        profileMessageText.setText("Profile:");
         profileTimeText.setText(dateAndTime.getTime());
         profileDateText.setText(dateAndTime.getDate());
-        if (daysCounter > 31) {
-            // TODO add Main notification
-            daysToChangeText.setText("Change filter!\nLast change: " + daysCounter + " days ago.");
+        if (daysCounter > userChangeAfterDays) {
+            // TODO add notification
+            daysCounterText.setText("Change filter!\nLast change: " + daysCounter + " days ago.");
         } else if (daysCounter == 1) {
-            daysToChangeText.setText("Filter usage: " + daysCounter + " day");
+            daysCounterText.setText("Filter usage: " + daysCounter + " day");
         } else {
-            daysToChangeText.setText("Filter usage: " + daysCounter + " days");
+            daysCounterText.setText("Filter usage: " + daysCounter + " days");
+        }
+
+        if (userChangeAfterDays == 1){
+            changeAfterDaysText.setText("Filter change after: " + userChangeAfterDays + " day");
+        }else{
+            changeAfterDaysText.setText("Filter change after: " + userChangeAfterDays + " days");
         }
 
 
@@ -88,14 +104,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Method called to initiate every Check Method at once
-     */
-    public void check() {
-        countingDaysToMaxEfficiency();
-//        countingWaterToMaxEfficiency();
-    }
-
     public int getSavedDay() {
         return savedDay;
     }
@@ -106,17 +114,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
 
     public int getSavedYear() {
         return savedYear;
-    }
-
-    /**
-     * CM(Check Method) checks if current day equals X, if false adds 1 to daysCounter
-     * and then is set to true to reset for today
-     */
-    private void countingDaysToMaxEfficiency() {
-        if (x != dateAndTime.getDay()) {
-            daysCounter = daysCounter + 1;
-            x = dateAndTime.getDay();
-        }
     }
 
     /**
