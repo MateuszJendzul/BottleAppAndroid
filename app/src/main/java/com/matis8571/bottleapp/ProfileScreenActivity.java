@@ -83,7 +83,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
         profileTimeText.setText(dateAndTime.getTime());
         profileDateText.setText(dateAndTime.getDate());
         if (daysCounter > userChangeAfterDays) {
-            // TODO add notification
             daysCounterText.setText("Change filter!\nLast change: " + daysCounter + " days ago.");
         } else if (daysCounter == 1) {
             daysCounterText.setText("Filter usage: " + daysCounter + " day");

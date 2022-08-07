@@ -103,6 +103,10 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
                         //in order to make boolean work as intended use reference to class not class instance
                         MainActivity.enableShowProfileButton = true;
                         Toast.makeText(ProfileSetupScreenActivity.this, "Profile updated", Toast.LENGTH_SHORT).show();
+
+                        Intent setupToFilterSetupButtonIntent = new Intent(
+                                ProfileSetupScreenActivity.this, FilterSetupActivity.class);
+                        startActivity(setupToFilterSetupButtonIntent);
                     }
                 }
             }

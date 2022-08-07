@@ -18,7 +18,8 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
-
+//TODO fix bottle drunk button so it wont show negative amounts.
+// check how to use methods when application is closed
 public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";
@@ -27,11 +28,10 @@ public class MainActivity extends AppCompatActivity {
             showInMainDailyWaterConsumptionText;
     Button profileEditButton, showProfileButton, bottleDrunkButton, showProfileButtonToast;
     protected static boolean enableShowProfileButton = false;
-    private int daysCounter, x, userChangeAfterDays, bottlesDrunk, dailyWaterConsumption, bottleCapacity,
-            howMuchToDrink;
-    private NotificationManagerCompat notificationManager;;
+    private int daysCounter, x, bottlesDrunk, howMuchToDrink;
+    private NotificationManagerCompat notificationManager;
     DateAndTime dateAndTime = new DateAndTime();
-//TODO fix showInMainDailyWaterConsumptionText
+
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,16 +40,12 @@ public class MainActivity extends AppCompatActivity {
         // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
         mainCheckMethod();
+        howMuchToDrink();
         notificationManager = NotificationManagerCompat.from(this);
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
-        userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
-
-        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
-                "userProfilePrefs", Context.MODE_PRIVATE);
-        bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
 
         //make new button/text object using previously setup id
         profileEditButton = (Button) findViewById(R.id.profileEditButton);
@@ -139,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 addOneToBottlesDrunk();
                 howMuchToDrink();
+                showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
                 Toast.makeText(MainActivity.this, "You drunk another water bottle!", Toast.LENGTH_SHORT).show();
             }
         });
@@ -151,6 +148,10 @@ public class MainActivity extends AppCompatActivity {
      */
     //sends notification about how many days left till previously setup (by user) days cap
     public void notificationCh1Days() {
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
+
         String notificationCh1Title = "BottleApp";
         String notificationCh1Message;
         if ((userChangeAfterDays - daysCounter) == 0) {
@@ -205,7 +206,17 @@ public class MainActivity extends AppCompatActivity {
         bottlesDrunk = bottlesDrunk + 1;
     }
 
+    //counts on the base of previously settled properties how much more water does user need to drink today
+    @SuppressLint("SetTextI18n")
     private void howMuchToDrink() {
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        int dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
+
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+
         howMuchToDrink = dailyWaterConsumption - (bottlesDrunk * bottleCapacity);
     }
 }

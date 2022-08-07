@@ -15,10 +15,12 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.w3c.dom.Text;
+
 public class FilterSetupActivity extends AppCompatActivity {
     private static final String TAG = "ProfileScreen";
 
-    TextView filterDateSetupText, userSetDaysToChangeText, userSetDailyWaterUsageText;
+    TextView filterDateSetupText, userSetDaysToChangeText, userSetDailyWaterUsageText, filterDateText, filterTimeText;
     EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit, dailyWaterConsumptionEdit;
     Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton;
     DateAndTime dateAndTime = new DateAndTime();
@@ -34,6 +36,8 @@ public class FilterSetupActivity extends AppCompatActivity {
         filterSetupToMainButton = (Button) findViewById(R.id.filterSetupToMainButton);
         filterSetupBackButton = (Button) findViewById(R.id.filterSetupBackButton);
         submitFilterButton = (Button) findViewById(R.id.submitFilterButton);
+        filterDateText = (TextView) findViewById(R.id.filterDate);
+        filterTimeText = (TextView) findViewById(R.id.filterTime);
         userSetDailyWaterUsageText = (TextView) findViewById(R.id.userSetDailyWaterUsageMessage);
         userSetDaysToChangeText = (TextView) findViewById(R.id.userSetDaysToChangeMessage);
         filterDateSetupText = (TextView) findViewById(R.id.filterDateSetupMessage);
@@ -42,6 +46,8 @@ public class FilterSetupActivity extends AppCompatActivity {
         filterStartMonthEdit = (EditText) findViewById(R.id.filterStartMonthInput);
         filterDaysToChangeEdit = (EditText) findViewById(R.id.filterDaysToChangeInput);
 
+        filterDateText.setText(dateAndTime.getDate());
+        filterTimeText.setText(dateAndTime.getTime());
         userSetDailyWaterUsageText.setText("Daily water consumption:");
         userSetDaysToChangeText.setText("Filter change after:");
         filterDateSetupText.setText("Filter start date:");
