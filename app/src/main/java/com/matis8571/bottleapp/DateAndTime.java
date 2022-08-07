@@ -35,11 +35,19 @@ public class DateAndTime extends AppCompatActivity {
         return year;
     }
 
+    public int getTimeHour(){
+        return timeHour;
+    }
+
     /**
      * Returns actual time of the day using java.util.Calendar.
      */
     public String getTime() {
-        return timeHour + ":" + timeMinute;
+        if(timeMinute < 10){
+            return timeHour + ":0" + timeMinute;
+        }else {
+            return timeHour + ":" + timeMinute;
+        }
     }
 
     /**

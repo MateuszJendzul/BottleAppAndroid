@@ -18,8 +18,8 @@ import androidx.appcompat.app.AppCompatActivity;
 public class FilterSetupActivity extends AppCompatActivity {
     private static final String TAG = "ProfileScreen";
 
-    TextView filterDateSetupText, userSetDaysToChangeMessage;
-    EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit;
+    TextView filterDateSetupText, userSetDaysToChangeText, userSetDailyWaterUsageText;
+    EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit, dailyWaterConsumptionEdit;
     Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton;
     DateAndTime dateAndTime = new DateAndTime();
 
@@ -34,13 +34,16 @@ public class FilterSetupActivity extends AppCompatActivity {
         filterSetupToMainButton = (Button) findViewById(R.id.filterSetupToMainButton);
         filterSetupBackButton = (Button) findViewById(R.id.filterSetupBackButton);
         submitFilterButton = (Button) findViewById(R.id.submitFilterButton);
-        userSetDaysToChangeMessage = (TextView) findViewById(R.id.userSetDaysToChangeMessage);
+        userSetDailyWaterUsageText = (TextView) findViewById(R.id.userSetDailyWaterUsageMessage);
+        userSetDaysToChangeText = (TextView) findViewById(R.id.userSetDaysToChangeMessage);
         filterDateSetupText = (TextView) findViewById(R.id.filterDateSetupMessage);
+        dailyWaterConsumptionEdit = (EditText) findViewById(R.id.dailyWaterConsumptionInput);
         filterStartDayEdit = (EditText) findViewById(R.id.filterStartDayInput);
         filterStartMonthEdit = (EditText) findViewById(R.id.filterStartMonthInput);
         filterDaysToChangeEdit = (EditText) findViewById(R.id.filterDaysToChangeInput);
 
-        userSetDaysToChangeMessage.setText("Filter change after:");
+        userSetDailyWaterUsageText.setText("Daily water consumption:");
+        userSetDaysToChangeText.setText("Filter change after:");
         filterDateSetupText.setText("Filter start date:");
 
         submitFilterButton.setEnabled(false);
@@ -50,6 +53,7 @@ public class FilterSetupActivity extends AppCompatActivity {
                 Log.d(TAG, "onClick: submitFilterButton");
                 String filterDay = filterStartDayEdit.getText().toString();
                 String filterMonth = filterStartMonthEdit.getText().toString();
+                int dailyWaterConsumption = Integer.parseInt(dailyWaterConsumptionEdit.getText().toString());
                 int userChangeAfterDays = Integer.parseInt(filterDaysToChangeEdit.getText().toString());
                 int savedYear = dateAndTime.getYear();
 
@@ -57,6 +61,7 @@ public class FilterSetupActivity extends AppCompatActivity {
                 SharedPreferences.Editor filterPrefsEditor = filterPrefs.edit();
                 filterPrefsEditor.putString("filterDay", filterDay);
                 filterPrefsEditor.putString("filterMonth", filterMonth);
+                filterPrefsEditor.putInt("dailyWaterConsumption", dailyWaterConsumption);
                 filterPrefsEditor.putInt("userChangeAfterDays", userChangeAfterDays);
                 filterPrefsEditor.putInt("savedYear", savedYear);
                 filterPrefsEditor.apply();

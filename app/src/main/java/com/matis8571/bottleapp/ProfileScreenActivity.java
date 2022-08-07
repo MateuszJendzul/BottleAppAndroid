@@ -17,7 +17,8 @@ public class ProfileScreenActivity extends AppCompatActivity {
     private final String TAG = "ProfileScreen";
 
     TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText, profileTimeText,
-            profileDateText, profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText;
+            profileDateText, profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText,
+            dailyWaterConsumptionText;
     Button showToMainButton;
     private int savedDay, savedMonth, savedYear;
     DateAndTime dateAndTime = new DateAndTime();
@@ -30,6 +31,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate: Starting");
 
         showToMainButton = (Button) findViewById(R.id.showToMainButton);
+        dailyWaterConsumptionText = (TextView) findViewById(R.id.dailyWaterConsumption);
         changeAfterDaysText = (TextView) findViewById(R.id.changeAfterDays);
         weightText = (TextView) findViewById(R.id.profileScreenWeight);
         bottleCapacityText = (TextView) findViewById(R.id.profileScreenBottleCapacity);
@@ -53,23 +55,25 @@ public class ProfileScreenActivity extends AppCompatActivity {
         //to receive values from other activity make new corresponding variable and assign it to
         // a name of variable which was previously send to Editor "weightString" you can then add
         // default value set to variables defaults
+        String profileName = userProfilePrefsReceiver.getString("profileName", null);
         int weight = userProfilePrefsReceiver.getInt("weight", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
-        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        String profileName = userProfilePrefsReceiver.getString("profileName", null);
         String filterDay = filterPrefsReceiver.getString("filterDay", null);
         String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
+        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
+        int dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
+        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
         savedDay = Integer.parseInt(filterDay);
-        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
 
         SharedPreferences profilePrefs = getSharedPreferences("profilePrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor profilePrefsEditor = profilePrefs.edit();
         profilePrefsEditor.putInt("daysCounter", daysCounter);
         profilePrefsEditor.apply();
 
+        dailyWaterConsumptionText.setText("Daily water consumption: " + dailyWaterConsumption + " ml");
         weightText.setText("Weight: " + weight + " kg");
         bottleCapacityText.setText("Bottle capacity: " + bottleCapacity + " ml");
         filterEfficiencyText.setText("Filter efficiency: " + filterEfficiency + " l");
@@ -102,18 +106,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
                 startActivity(showToMainButtonIntent);
             }
         });
-    }
-
-    public int getSavedDay() {
-        return savedDay;
-    }
-
-    public int getSavedMonth() {
-        return savedMonth;
-    }
-
-    public int getSavedYear() {
-        return savedYear;
     }
 
     /**

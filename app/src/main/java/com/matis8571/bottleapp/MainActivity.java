@@ -23,13 +23,15 @@ public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";
 
-    TextView welcomeText, profileSetupText, showProfileText, mainTimeText, mainDateText, alarmNotificationsText;
-    Button profileEditButton, showProfileButton, showProfileButtonToast, test;
-    private int daysCounter, x, userChangeAfterDays;
-    DateAndTime dateAndTime = new DateAndTime();
+    TextView welcomeText, profileSetupText, showProfileText, mainTimeText, mainDateText, daysToChangeFilterText,
+            showInMainDailyWaterConsumptionText;
+    Button profileEditButton, showProfileButton, bottleDrunkButton, showProfileButtonToast;
     protected static boolean enableShowProfileButton = false;
-    private NotificationManagerCompat notificationManager;
-
+    private int daysCounter, x, userChangeAfterDays, bottlesDrunk, dailyWaterConsumption, bottleCapacity,
+            howMuchToDrink;
+    private NotificationManagerCompat notificationManager;;
+    DateAndTime dateAndTime = new DateAndTime();
+//TODO fix showInMainDailyWaterConsumptionText
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,23 +39,33 @@ public class MainActivity extends AppCompatActivity {
         //Log.d tags a message to method, so it will pop up in a log screen every time we call this method
         // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
+        mainCheckMethod();
         notificationManager = NotificationManagerCompat.from(this);
-        check();
+
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
+        dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
+
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
+        bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
 
         //make new button/text object using previously setup id
         profileEditButton = (Button) findViewById(R.id.profileEditButton);
         showProfileButton = (Button) findViewById(R.id.showProfileButton);
+        bottleDrunkButton = (Button) findViewById(R.id.bottleDrunkButton);
         showProfileButtonToast = (Button) findViewById(R.id.showProfileButtonToast);
-        test = (Button) findViewById(R.id.test);
         welcomeText = (TextView) findViewById(R.id.welcomeText);
         profileSetupText = (TextView) findViewById(R.id.profileSetupText);
         showProfileText = (TextView) findViewById(R.id.showProfileText);
         mainTimeText = (TextView) findViewById(R.id.time);
         mainDateText = (TextView) findViewById(R.id.date);
-        alarmNotificationsText = (TextView) findViewById(R.id.alarmNotificationsText);
+        daysToChangeFilterText = (TextView) findViewById(R.id.daysToChangeFilter);
+        showInMainDailyWaterConsumptionText = (TextView) findViewById(R.id.showInMainDailyWaterConsumption);
 
-        //TODO set alarm messages
-        alarmNotificationsText.setText("");
+        showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+        daysToChangeFilterText.setText("Days left to filter change: " + (userChangeAfterDays - daysCounter));
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
         showProfileText.setText("Show profile:");
@@ -65,10 +77,6 @@ public class MainActivity extends AppCompatActivity {
         mainPrefsEditor.putInt("daysCounter", daysCounter);
         mainPrefsEditor.apply();
 
-        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "filterPrefs", Context.MODE_PRIVATE);
-        userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-
         //puts transparent button on top of inactive profile button
         // which is supposed to only show toast message and deactivate it
         // when profile button becomes active
@@ -76,6 +84,23 @@ public class MainActivity extends AppCompatActivity {
         if (enableShowProfileButton) {
             showProfileButtonToast.setEnabled(false);
             showProfileButton.setEnabled(true);
+        }
+
+        //sends notifications every day for the last 3 days of
+        if (daysCounter == (userChangeAfterDays - 3) || daysCounter == (userChangeAfterDays - 2) ||
+                daysCounter == (userChangeAfterDays - 1)) {
+            notificationCh1Days();
+        }
+
+        //checks if user didn't yet drink settled amount of water and then sends notifications at fixed hours
+        if (howMuchToDrink > 0) {
+            switch (dateAndTime.getTimeHour()) {
+                case 10:
+                case 14:
+                case 18:
+                    notificationCh2DrinkReminder();
+                    break;
+            }
         }
 
         //make event when button does something when clicked
@@ -109,10 +134,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        test.setOnClickListener(new View.OnClickListener() {
+        bottleDrunkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notificationCh1Days();
+                addOneToBottlesDrunk();
+                howMuchToDrink();
+                Toast.makeText(MainActivity.this, "You drunk another water bottle!", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -124,13 +151,18 @@ public class MainActivity extends AppCompatActivity {
      */
     //sends notification about how many days left till previously setup (by user) days cap
     public void notificationCh1Days() {
-        String title = "BottleApp";
-        String message = (userChangeAfterDays - daysCounter) + " days left to filter change.";
+        String notificationCh1Title = "BottleApp";
+        String notificationCh1Message;
+        if ((userChangeAfterDays - daysCounter) == 0) {
+            notificationCh1Message = "Change filter now!";
+        } else {
+            notificationCh1Message = "Days left to filter change: " + (userChangeAfterDays - daysCounter);
+        }
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
-                .setContentText(message)
+                .setContentTitle(notificationCh1Title)
+                .setContentText(notificationCh1Message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
@@ -138,37 +170,42 @@ public class MainActivity extends AppCompatActivity {
         notificationManager.notify(1, notification);
     }
 
-    public void notificationCh2Quantity() {
-        String title = "title";
-        String message = "message";
+    public void notificationCh2DrinkReminder() {
+        String title = "BottleApp";
+        String message = "Don't forget to drink more water!";
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
 
         notificationManager.notify(2, notification);
     }
 
     /**
-     * Method called to initiate every Check Method at once
+     * Method called to initiate every Check Method once a day. CMs checks if current day equals X,
+     * if false it executes its contents and then sets X as current day to reset it for today.
      */
-    public void check() {
-        countingDaysToMaxEfficiency();
-//        countingWaterToMaxEfficiency();
-    }
-
-    /**
-     * CM(Check Method) checks if current day equals X, if false adds 1 to daysCounter
-     * and then is set to true to reset for today
-     */
-    private void countingDaysToMaxEfficiency() {
+    public void mainCheckMethod() {
         if (x != dateAndTime.getDay()) {
-            daysCounter = daysCounter + 1;
+            countingDaysToFilterChange();
             x = dateAndTime.getDay();
         }
     }
 
+    //CM(Check Method) adds 1 to daysCounter
+    private void countingDaysToFilterChange() {
+        daysCounter = daysCounter + 1;
+    }
+
+    private void addOneToBottlesDrunk() {
+        bottlesDrunk = bottlesDrunk + 1;
+    }
+
+    private void howMuchToDrink() {
+        howMuchToDrink = dailyWaterConsumption - (bottlesDrunk * bottleCapacity);
+    }
 }
