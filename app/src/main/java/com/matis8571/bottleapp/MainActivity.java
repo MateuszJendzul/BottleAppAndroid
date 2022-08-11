@@ -20,6 +20,7 @@ import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
 //TODO fix bottle drunk button so it wont show negative amounts.
 // check how to use methods when application is closed
+// update rest of the classes (fonts)
 public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";

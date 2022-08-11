@@ -85,17 +85,17 @@ public class FilterSetupActivity extends AppCompatActivity {
                 // fields doesn't exceed set values disables submitFilterButtonToast button and enables
                 // submitFilterButton and allows to upload input data, but if one exceeds, shows Toast
                 if (filterStartDayEdit.getText().toString().isEmpty() || filterStartMonthEdit.getText().toString().isEmpty()
-                || filterDaysToChangeEdit.getText().toString().isEmpty()) {
+                        || filterDaysToChangeEdit.getText().toString().isEmpty()) {
                     Toast.makeText(FilterSetupActivity.this, "Empty fields", Toast.LENGTH_SHORT).show();
+                } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) > 31 ||
+                        Integer.parseInt(filterStartMonthEdit.getText().toString()) > 12) {
+                    Toast.makeText(FilterSetupActivity.this, "Day or month exceeds its max value",
+                            Toast.LENGTH_SHORT).show();
                 } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) <= 31 &&
                         Integer.parseInt(filterStartMonthEdit.getText().toString()) <= 12) {
                     submitFilterButtonToast.setEnabled(false);
                     submitFilterButton.setEnabled(true);
                     Toast.makeText(FilterSetupActivity.this, "Submit now", Toast.LENGTH_SHORT).show();
-                } else if (Integer.parseInt(filterStartDayEdit.getText().toString()) > 31 ||
-                        Integer.parseInt(filterStartMonthEdit.getText().toString()) > 12) {
-                    Toast.makeText(FilterSetupActivity.this, "Day or month exceeds its max value",
-                            Toast.LENGTH_SHORT).show();
                 }
             }
         });
