@@ -47,11 +47,6 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
         profileSetupTimeText.setText(dateAndTime.getTime());
         profileSetupDateText.setText(dateAndTime.getDate());
 
-        //in order to send any variables between activities use SharedPreferences
-        // create variable name userProfilePrefs, and then a name to identify it with "userProfilePrefs"
-        // lastly set up a Context mode
-        SharedPreferences userProfilePrefs = getSharedPreferences("userProfilePrefs", Context.MODE_PRIVATE);
-
         setupToMainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,6 +84,10 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
                     } else if (isNumeric(profileName)) {
                         Toast.makeText(ProfileSetupScreenActivity.this, "Name contain numbers!", Toast.LENGTH_SHORT).show();
                     } else {
+                        //in order to send any variables between activities use SharedPreferences
+                        // create variable name userProfilePrefs, and then a name to identify it with "userProfilePrefs"
+                        // lastly set up a Context mode
+                        SharedPreferences userProfilePrefs = getSharedPreferences("userProfilePrefs", Context.MODE_PRIVATE);
                         //create SharedPreferences.Editor and assigns previously created SharedPreferences variable to it
                         SharedPreferences.Editor userProfilePrefsEditor = userProfilePrefs.edit();
                         //to send specific variables put them under custom name "weight"

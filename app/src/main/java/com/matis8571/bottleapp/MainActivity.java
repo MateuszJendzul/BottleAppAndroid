@@ -18,9 +18,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
-//TODO fix bottle drunk button so it wont show negative amounts.
-// check how to use methods when application is closed
-// update rest of the classes (fonts)
+
 public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";
@@ -131,13 +129,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //checks if there is still any amount of water left and then
         bottleDrunkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOneToBottlesDrunk();
-                howMuchToDrink();
-                showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
-                Toast.makeText(MainActivity.this, "You drunk another water bottle!", Toast.LENGTH_SHORT).show();
+                if (howMuchToDrink > 0) {
+                    addOneToBottlesDrunk();
+                    howMuchToDrink();
+                    showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+                    Toast.makeText(MainActivity.this, "You drunk another water bottle!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Intent showPopUp = new Intent(MainActivity.this, PopUp.class);
+                    startActivity(showPopUp);
+                }
             }
         });
     }
@@ -218,6 +222,12 @@ public class MainActivity extends AppCompatActivity {
                 "userProfilePrefs", Context.MODE_PRIVATE);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
 
-        howMuchToDrink = dailyWaterConsumption - (bottlesDrunk * bottleCapacity);
+        SharedPreferences popUpPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "sharedPreferencesPopUp", Context.MODE_PRIVATE);
+        int extendDailyWaterConsumption = popUpPrefsReceiver.getInt("extendDailyWaterConsumption", 0);
+
+        howMuchToDrink = dailyWaterConsumption + (
+                extendDailyWaterConsumption * bottleCapacity) - (bottlesDrunk * bottleCapacity);
     }
+//TODO fix variables, that values wont change when reopening activities
 }

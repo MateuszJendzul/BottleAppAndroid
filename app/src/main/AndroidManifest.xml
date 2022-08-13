@@ -21,6 +21,7 @@
         <activity android:name=".ProfileSetupScreenActivity"/>
         <activity android:name=".ProfileScreenActivity"/>
         <activity android:name=".FilterSetupActivity"/>
+        <activity android:name="PopUp"/>
     </application>
 
 </manifest>
