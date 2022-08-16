@@ -68,11 +68,15 @@ public class FilterSetupActivity extends AppCompatActivity {
                 filterPrefsEditor.putString("filterDay", filterDay);
                 filterPrefsEditor.putString("filterMonth", filterMonth);
                 filterPrefsEditor.putInt("dailyWaterConsumption", dailyWaterConsumption);
+                filterPrefsEditor.putInt("dailyWaterConsumptionOnlyRead", dailyWaterConsumption);
                 filterPrefsEditor.putInt("userChangeAfterDays", userChangeAfterDays);
                 filterPrefsEditor.putInt("savedYear", savedYear);
                 filterPrefsEditor.apply();
 
                 Toast.makeText(FilterSetupActivity.this, "Filter updated", Toast.LENGTH_SHORT).show();
+
+                Intent submitFilterButtonIntent = new Intent(FilterSetupActivity.this, MainActivity.class);
+                startActivity(submitFilterButtonIntent);
             }
         });
 
@@ -96,6 +100,10 @@ public class FilterSetupActivity extends AppCompatActivity {
                     submitFilterButtonToast.setEnabled(false);
                     submitFilterButton.setEnabled(true);
                     Toast.makeText(FilterSetupActivity.this, "Submit now", Toast.LENGTH_SHORT).show();
+                } else if (Integer.parseInt(dailyWaterConsumptionEdit.getText().toString()) < 0 || 
+                        dailyWaterConsumptionEdit.getText().toString().isEmpty()){
+                    Toast.makeText(FilterSetupActivity.this, "Incorrect daily water demand",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         });

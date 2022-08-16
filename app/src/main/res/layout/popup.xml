@@ -4,27 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/pop_up_background"
     tools:context=".PopUp">
-
-    <Button
-        android:id="@+id/popUpToMainButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:background="@drawable/ripple_effect"
-        android:fontFamily="@font/quicksand_bold"
-        android:foreground="@drawable/button_foreground"
-        android:text="back"
-        android:textColor="@color/white"
-        app:backgroundTint="@color/button_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/popUpSubmit"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText,UnusedAttribute" />
 
     <Button
         android:id="@+id/popUpSubmit"
@@ -48,11 +29,12 @@
     <TextView
         android:id="@+id/popUpDailyExtendText"
         android:layout_width="wrap_content"
-        android:textColor="@color/black"
         android:layout_height="wrap_content"
         android:fontFamily="@font/quicksand_book"
+        android:gravity="center"
         android:text="popUpDailyExtendText"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,7 +53,7 @@
         android:gravity="center"
         android:hint="How much to add: "
         android:importantForAutofill="no"
-        android:inputType="text"
+        android:inputType="number"
         android:text=""
         android:textColorHint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"

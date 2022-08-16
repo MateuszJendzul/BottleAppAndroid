@@ -18,7 +18,7 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
-
+//TODO make activity refresh
 public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";
@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private int daysCounter, x, bottlesDrunk, howMuchToDrink;
     private NotificationManagerCompat notificationManager;
     DateAndTime dateAndTime = new DateAndTime();
+    PopUp popUp = new PopUp();
 
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,13 +39,16 @@ public class MainActivity extends AppCompatActivity {
         //Log.d tags a message to method, so it will pop up in a log screen every time we call this method
         // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
+        notificationManager = NotificationManagerCompat.from(this);
+
         mainCheckMethod();
         howMuchToDrink();
-        notificationManager = NotificationManagerCompat.from(this);
+        dateAndTime.dailyReset(popUp.popUpSubmitBoolean);
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
+        int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
 
         //make new button/text object using previously setup id
         profileEditButton = (Button) findViewById(R.id.profileEditButton);
@@ -59,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
         daysToChangeFilterText = (TextView) findViewById(R.id.daysToChangeFilter);
         showInMainDailyWaterConsumptionText = (TextView) findViewById(R.id.showInMainDailyWaterConsumption);
 
-        showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+        showInMainDailyWaterConsumptionText.setText("Water to drink: " +
+                dateAndTime.dailyReset(howMuchToDrink, dailyWaterConsumptionOnlyRead) + " ml");
         daysToChangeFilterText.setText("Days left to filter change: " + (userChangeAfterDays - daysCounter));
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
@@ -136,6 +141,10 @@ public class MainActivity extends AppCompatActivity {
                 if (howMuchToDrink > 0) {
                     addOneToBottlesDrunk();
                     howMuchToDrink();
+                    SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                            "mainPrefs", Context.MODE_PRIVATE);
+                    int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+
                     showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
                     Toast.makeText(MainActivity.this, "You drunk another water bottle!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -209,9 +218,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void addOneToBottlesDrunk() {
         bottlesDrunk = bottlesDrunk + 1;
+
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        mainPrefsEditor.putInt("bottlesDrunk", bottlesDrunk);
+        mainPrefsEditor.apply();
     }
 
     //counts on the base of previously settled properties how much more water does user need to drink today
+    //to prevent values from resetting after closing app, update them in SharedPreferences
     @SuppressLint("SetTextI18n")
     private void howMuchToDrink() {
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -226,8 +241,16 @@ public class MainActivity extends AppCompatActivity {
                 "sharedPreferencesPopUp", Context.MODE_PRIVATE);
         int extendDailyWaterConsumption = popUpPrefsReceiver.getInt("extendDailyWaterConsumption", 0);
 
-        howMuchToDrink = dailyWaterConsumption + (
-                extendDailyWaterConsumption * bottleCapacity) - (bottlesDrunk * bottleCapacity);
+        if (popUp.popUpSubmitBoolean){
+            howMuchToDrink = dailyWaterConsumption + (
+                    extendDailyWaterConsumption * bottleCapacity) - (bottlesDrunk * bottleCapacity);
+        }else{
+            howMuchToDrink = dailyWaterConsumption - (bottlesDrunk * bottleCapacity);
+        }
+
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink);
+        mainPrefsEditor.apply();
     }
-//TODO fix variables, that values wont change when reopening activities
 }

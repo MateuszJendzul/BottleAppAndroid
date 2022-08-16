@@ -62,7 +62,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         String filterDay = filterPrefsReceiver.getString("filterDay", null);
         String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        int dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
+        int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
@@ -73,7 +73,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         profilePrefsEditor.putInt("daysCounter", daysCounter);
         profilePrefsEditor.apply();
 
-        dailyWaterConsumptionText.setText("Daily water consumption: " + dailyWaterConsumption + " ml");
+        dailyWaterConsumptionText.setText("Daily water consumption: " + dailyWaterConsumptionOnlyRead + " ml");
         weightText.setText("Weight: " + weight + " kg");
         bottleCapacityText.setText("Bottle capacity: " + bottleCapacity + " ml");
         filterEfficiencyText.setText("Filter efficiency: " + filterEfficiency + " l");

@@ -1,18 +1,11 @@
 package com.matis8571.bottleapp;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
-
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
 import java.util.Calendar;
 
 public class DateAndTime extends AppCompatActivity {
-    private int day, month, year, timeHour, timeMinute;
+    private int day, month, year, timeHour, timeMinute, timeSecond;
     Calendar calendar = Calendar.getInstance();
 
     public DateAndTime() {
@@ -21,6 +14,7 @@ public class DateAndTime extends AppCompatActivity {
         year = calendar.get(Calendar.YEAR);
         timeHour = calendar.get(Calendar.HOUR_OF_DAY);
         timeMinute = calendar.get(Calendar.MINUTE);
+        timeSecond = calendar.get(Calendar.SECOND);
     }
 
     public int getDay() {
@@ -35,7 +29,7 @@ public class DateAndTime extends AppCompatActivity {
         return year;
     }
 
-    public int getTimeHour(){
+    public int getTimeHour() {
         return timeHour;
     }
 
@@ -43,9 +37,9 @@ public class DateAndTime extends AppCompatActivity {
      * Returns actual time of the day using java.util.Calendar.
      */
     public String getTime() {
-        if(timeMinute < 10){
+        if (timeMinute < 10) {
             return timeHour + ":0" + timeMinute;
-        }else {
+        } else {
             return timeHour + ":" + timeMinute;
         }
     }
@@ -59,6 +53,21 @@ public class DateAndTime extends AppCompatActivity {
             return getDay() + ".0" + getMonth() + "." + getYear();
         } else {
             return getDay() + "." + getMonth() + "." + getYear();
+        }
+    }
+
+    public int dailyReset(int toReset, int resetTo) {
+        if (timeHour == 23 && timeMinute == 59) {
+            toReset = resetTo;
+        }
+        return toReset;
+    }
+
+    public boolean dailyReset(boolean toReset) {
+        if (timeHour == 23 && timeMinute == 59) {
+            return !toReset;
+        } else {
+            return toReset;
         }
     }
 
