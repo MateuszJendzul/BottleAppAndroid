@@ -44,7 +44,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showInMainDailyWaterConsumption"
+        app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml" />
 
@@ -211,6 +211,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/daysToChangeFilter"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/showInMainWaterDrunk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/quicksand_bold"
+        android:text="showInMainWaterDrunk"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showInMainDailyWaterConsumption"
         app:layout_constraintVertical_bias="0.0"
         tools:ignore="HardcodedText" />
 

@@ -18,19 +18,18 @@ import androidx.core.app.NotificationManagerCompat;
 
 import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
-//TODO make activity refresh
+
 public class MainActivity extends AppCompatActivity {
     //creates a tag variable to later tag activities in logs
     private static final String TAG = "MainActivity";
 
     TextView welcomeText, profileSetupText, showProfileText, mainTimeText, mainDateText, daysToChangeFilterText,
-            showInMainDailyWaterConsumptionText;
+            showInMainDailyWaterConsumptionText, showInMainWaterDrunkText;
     Button profileEditButton, showProfileButton, bottleDrunkButton, showProfileButtonToast;
-    protected static boolean enableShowProfileButton = false;
-    private int daysCounter, x, bottlesDrunk, howMuchToDrink;
+    protected static boolean enableShowProfileButton = false, popUpSubmitBoolean = false;
+    private int daysCounter, x, bottlesDrunk, bottlesDrunkExtended, howMuchToDrink;
     private NotificationManagerCompat notificationManager;
     DateAndTime dateAndTime = new DateAndTime();
-    PopUp popUp = new PopUp();
 
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,12 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
         mainCheckMethod();
         howMuchToDrink();
-        dateAndTime.dailyReset(popUp.popUpSubmitBoolean);
+        dateAndTime.dailyReset(popUpSubmitBoolean);
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
         int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
+
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDrunkSum = mainPrefsReceiver.getInt("bottlesDrunkSum", 0);
 
         //make new button/text object using previously setup id
         profileEditButton = (Button) findViewById(R.id.profileEditButton);
@@ -62,9 +65,12 @@ public class MainActivity extends AppCompatActivity {
         mainDateText = (TextView) findViewById(R.id.date);
         daysToChangeFilterText = (TextView) findViewById(R.id.daysToChangeFilter);
         showInMainDailyWaterConsumptionText = (TextView) findViewById(R.id.showInMainDailyWaterConsumption);
+        showInMainWaterDrunkText = (TextView) findViewById(R.id.showInMainWaterDrunk);
 
+        //TODO make showInMainWaterDrunkText show actual total daily water drunk, for now it resets every time this activity is reloaded
         showInMainDailyWaterConsumptionText.setText("Water to drink: " +
-                dateAndTime.dailyReset(howMuchToDrink, dailyWaterConsumptionOnlyRead) + " ml");
+                dateAndTime.dailyReset(howMuchToDrink, dailyWaterConsumptionOnlyRead) + " ml MAIN");
+        showInMainWaterDrunkText.setText("Today you drank: " + bottlesDrunkSum + "ml of water MAIN");
         daysToChangeFilterText.setText("Days left to filter change: " + (userChangeAfterDays - daysCounter));
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
@@ -139,18 +145,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (howMuchToDrink > 0) {
-                    addOneToBottlesDrunk();
-                    howMuchToDrink();
-                    SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                            "mainPrefs", Context.MODE_PRIVATE);
-                    int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
-
-                    showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
-                    Toast.makeText(MainActivity.this, "You drunk another water bottle!", Toast.LENGTH_SHORT).show();
+                    if (popUpSubmitBoolean) {
+                        bottlesDrunkExtended++;
+                    } else {
+                        bottlesDrunk++;
+                    }
+//                    Toast.makeText(MainActivity.this, "Another bottle!", Toast.LENGTH_SHORT).show();
                 } else {
                     Intent showPopUp = new Intent(MainActivity.this, PopUp.class);
                     startActivity(showPopUp);
                 }
+
+                SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+                mainPrefsEditor.putInt("bottlesDrunk", bottlesDrunk);
+                mainPrefsEditor.putInt("bottlesDrunkExtended", bottlesDrunkExtended);
+                mainPrefsEditor.apply();
+
+                howMuchToDrink();
+
+                SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                        "mainPrefs", Context.MODE_PRIVATE);
+                int bottlesDrunkSum = mainPrefsReceiver.getInt("bottlesDrunkSum", 0);
+
+                showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+                showInMainWaterDrunkText.setText("Today you drank: " + bottlesDrunkSum + "ml of water");
             }
         });
     }
@@ -206,7 +225,12 @@ public class MainActivity extends AppCompatActivity {
      */
     public void mainCheckMethod() {
         if (x != dateAndTime.getDay()) {
+
             countingDaysToFilterChange();
+            SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                    "mainPrefs", Context.MODE_PRIVATE);
+            mainPrefsReceiver.edit().clear().apply();
+
             x = dateAndTime.getDay();
         }
     }
@@ -216,18 +240,9 @@ public class MainActivity extends AppCompatActivity {
         daysCounter = daysCounter + 1;
     }
 
-    private void addOneToBottlesDrunk() {
-        bottlesDrunk = bottlesDrunk + 1;
-
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDrunk", bottlesDrunk);
-        mainPrefsEditor.apply();
-    }
-
     //counts on the base of previously settled properties how much more water does user need to drink today
     //to prevent values from resetting after closing app, update them in SharedPreferences
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ApplySharedPref"})
     private void howMuchToDrink() {
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
@@ -241,16 +256,35 @@ public class MainActivity extends AppCompatActivity {
                 "sharedPreferencesPopUp", Context.MODE_PRIVATE);
         int extendDailyWaterConsumption = popUpPrefsReceiver.getInt("extendDailyWaterConsumption", 0);
 
-        if (popUp.popUpSubmitBoolean){
-            howMuchToDrink = dailyWaterConsumption + (
-                    extendDailyWaterConsumption * bottleCapacity) - (bottlesDrunk * bottleCapacity);
-        }else{
-            howMuchToDrink = dailyWaterConsumption - (bottlesDrunk * bottleCapacity);
-        }
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDrunk = mainPrefsReceiver.getInt("bottlesDrunk", 0);
+        int bottlesDrunkExtended = mainPrefsReceiver.getInt("bottlesDrunkExtended", 0);
+        int bottlesDrunkSum = (bottlesDrunk + bottlesDrunkExtended) * bottleCapacity;
 
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink);
+        mainPrefsEditor.putInt("bottlesDrunkSum", bottlesDrunkSum);
         mainPrefsEditor.apply();
+
+        if (popUpSubmitBoolean) {
+            howMuchToDrink = extendDailyWaterConsumption - (bottlesDrunkExtended * bottleCapacity);
+
+            Toast.makeText(MainActivity.this, "used extended: " +
+                    " extendDailyWaterConsumption: " + extendDailyWaterConsumption +
+                    " bottleCapacity" + bottleCapacity + " bottlesDrunkExtended: " + bottlesDrunkExtended, Toast.LENGTH_SHORT).show();
+        } else {
+            howMuchToDrink = dailyWaterConsumption - (bottlesDrunk * bottleCapacity);
+
+            Toast.makeText(MainActivity.this, "dailyWaterConsumption: " + dailyWaterConsumption + " bottlesDrunk: " +
+                    bottlesDrunk + " bottleCapacity: " + bottleCapacity, Toast.LENGTH_SHORT).show();
+        }
+
+        //clears mainPrefsReceiver context if set condition is achieved
+//        if(howMuchToDrink == 0){
+//            mainPrefsEditor.remove("bottlesDrunk");
+//            mainPrefsEditor.remove("bottlesDrunkExtended");
+//            mainPrefsEditor.apply();
+//        }
     }
 }
