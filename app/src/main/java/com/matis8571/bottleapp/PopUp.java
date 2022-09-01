@@ -62,7 +62,7 @@ public class PopUp extends AppCompatActivity {
                     sharedPreferencesPopUpEditor.putInt("extendDailyWaterConsumption", extendDailyWaterConsumption);
                     sharedPreferencesPopUpEditor.apply();
 
-                    MainActivity.popUpSubmitBoolean = true;
+//                    MainActivity.popUpSubmitBoolean = true;
                     Toast.makeText(PopUp.this, "Daily target extended", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(PopUp.this, MainActivity.class);

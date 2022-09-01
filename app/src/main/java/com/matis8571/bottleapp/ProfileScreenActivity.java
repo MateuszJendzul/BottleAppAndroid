@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -16,12 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 public class ProfileScreenActivity extends AppCompatActivity {
     private final String TAG = "ProfileScreen";
 
-    TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText, profileTimeText,
-            profileDateText, profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText,
-            dailyWaterConsumptionText;
+    TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText,
+            profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText,
+            dailyWaterConsumptionText, waterTodayText;
     Button showToMainButton;
     private int savedDay, savedMonth, savedYear;
-    DateAndTime dateAndTime = new DateAndTime();
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -30,18 +28,17 @@ public class ProfileScreenActivity extends AppCompatActivity {
         setContentView(R.layout.profile_screen);
         Log.d(TAG, "onCreate: Starting");
 
-        showToMainButton = (Button) findViewById(R.id.showToMainButton);
-        dailyWaterConsumptionText = (TextView) findViewById(R.id.dailyWaterConsumption);
-        changeAfterDaysText = (TextView) findViewById(R.id.changeAfterDays);
-        weightText = (TextView) findViewById(R.id.profileScreenWeight);
-        bottleCapacityText = (TextView) findViewById(R.id.profileScreenBottleCapacity);
-        filterEfficiencyText = (TextView) findViewById(R.id.profileScreenFilterEfficiency);
-        profileNameText = (TextView) findViewById(R.id.profileScreenName);
-        profileTimeText = (TextView) findViewById(R.id.profileTime);
-        profileDateText = (TextView) findViewById(R.id.profileDate);
-        profileMessageText = (TextView) findViewById(R.id.profileMessage);
-        daysCounterText = (TextView) findViewById(R.id.daysCounter);
-        filterStartDateText = (TextView) findViewById(R.id.filterStartDate);
+        showToMainButton = findViewById(R.id.showToMainButton);
+        dailyWaterConsumptionText = findViewById(R.id.dailyWaterConsumption);
+        changeAfterDaysText = findViewById(R.id.changeAfterDays);
+        weightText = findViewById(R.id.profileScreenWeight);
+        bottleCapacityText = findViewById(R.id.profileScreenBottleCapacity);
+        filterEfficiencyText = findViewById(R.id.profileScreenFilterEfficiency);
+        profileNameText = findViewById(R.id.profileScreenName);
+        profileMessageText = findViewById(R.id.profileMessage);
+        daysCounterText = findViewById(R.id.daysCounter);
+        filterStartDateText = findViewById(R.id.filterStartDate);
+        waterTodayText = findViewById(R.id.waterToday);
 
         //to get values from userProfilePrefsEditor create new SharedPreferences object userProfilePrefsReceiver
         // use name made in the activity which variable is from "userProfilePrefs" (ProfileSetupScreen.class)
@@ -64,6 +61,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
         int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
+        int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
         savedDay = Integer.parseInt(filterDay);
@@ -80,8 +78,8 @@ public class ProfileScreenActivity extends AppCompatActivity {
         profileNameText.setText("Name: " + profileName);
         filterStartDateText.setText("Filter start: " + filterStartDateString());
         profileMessageText.setText("Profile:");
-        profileTimeText.setText(dateAndTime.getTime());
-        profileDateText.setText(dateAndTime.getDate());
+        waterTodayText.setText("Water today: " + waterToday);
+
         if (daysCounter > userChangeAfterDays) {
             daysCounterText.setText("Change filter!\nLast change: " + daysCounter + " days ago.");
         } else if (daysCounter == 1) {
@@ -90,20 +88,16 @@ public class ProfileScreenActivity extends AppCompatActivity {
             daysCounterText.setText("Filter usage: " + daysCounter + " days");
         }
 
-        if (userChangeAfterDays == 1){
+        if (userChangeAfterDays == 1) {
             changeAfterDaysText.setText("Filter change after: " + userChangeAfterDays + " day");
-        }else{
+        } else {
             changeAfterDaysText.setText("Filter change after: " + userChangeAfterDays + " days");
         }
 
-
-        showToMainButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "onClick: Clicked: setupToMainButton");
-                Intent showToMainButtonIntent = new Intent(ProfileScreenActivity.this, MainActivity.class);
-                startActivity(showToMainButtonIntent);
-            }
+        showToMainButton.setOnClickListener(view -> {
+            Log.d(TAG, "onClick: Clicked: setupToMainButton");
+            Intent showToMainButtonIntent = new Intent(ProfileScreenActivity.this, MainActivity.class);
+            startActivity(showToMainButtonIntent);
         });
     }
 
