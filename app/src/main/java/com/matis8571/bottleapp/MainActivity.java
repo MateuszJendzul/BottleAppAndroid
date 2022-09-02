@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     TextView welcomeText, profileSetupText, showProfileText, daysToChangeFilterText,
             showInMainDailyWaterConsumptionText, showInMainWaterDrunkText;
     Button profileEditButton, showProfileButton, addBottleButton, showProfileButtonToast, removeBottleButton;
-    private int daysCounter, x, bottlesDone, bottlesDoneExtend, howMuchToDrink, waterToday;
+    private int daysCounter, x, howMuchToDrink, waterToday;
     private NotificationManagerCompat notificationManager;
     DateAndTime dateAndTime = new DateAndTime();
 
@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         boolean blockMainText = userProfilePrefsReceiver.getBoolean("blockMainText", false);
         boolean enableShowProfileButton = userProfilePrefsReceiver.getBoolean("blockMainText", false);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+        waterToday = mainPrefsReceiver.getInt("waterToday", 0);
 
         //make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
@@ -134,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
                 howMuchToDrink = 0;
                 addBottlesDone();
             } else {
-                addBottlesDoneExtend();
+                addBottlesDoneExtended();
             }
             howMuchToDrink();
             howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
@@ -144,13 +146,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         removeBottleButton.setOnClickListener(view -> {
-            if (howMuchToDrink > 0 && howMuchToDrink >= bottleCapacity) {
+            if (howMuchToDrink >= bottleCapacity) {
                 removeBottlesDone();
             } else if (bottleCapacity > howMuchToDrink) {
                 howMuchToDrink = bottleCapacity;
-                removeBottlesDoneExtend();
+                removeBottlesDone();
             } else {
-                removeBottlesDoneExtend();
+                removeBottlesDoneExtended();
             }
             howMuchToDrink();
             howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
@@ -227,6 +229,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addBottlesDone() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         bottlesDone++;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
@@ -235,6 +240,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeBottlesDone() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         bottlesDone--;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
@@ -242,19 +250,25 @@ public class MainActivity extends AppCompatActivity {
         mainPrefsEditor.apply();
     }
 
-    private void addBottlesDoneExtend() {
-        bottlesDoneExtend++;
+    private void addBottlesDoneExtended() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
+        bottlesDoneExtended++;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDoneExtend", bottlesDoneExtend);
+        mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended);
         mainPrefsEditor.apply();
     }
 
-    private void removeBottlesDoneExtend() {
-        bottlesDoneExtend--;
+    private void removeBottlesDoneExtended() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
+        bottlesDoneExtended--;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDoneExtend", bottlesDoneExtend);
+        mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended);
         mainPrefsEditor.apply();
     }
 
@@ -283,7 +297,6 @@ public class MainActivity extends AppCompatActivity {
         mainPrefsEditor.putInt("waterToday", waterToday);
         mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink);
         mainPrefsEditor.apply();
-        Toast.makeText(this, "waterToday: " + waterToday + " howMuchToDrink: " + howMuchToDrink, Toast.LENGTH_SHORT).show();
 
         //clears mainPrefsReceiver context if set condition is achieved
 //        if(howMuchToDrink == 0){
