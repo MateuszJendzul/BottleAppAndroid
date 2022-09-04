@@ -5,9 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.ResultReceiver;
 import android.util.DisplayMetrics;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -43,31 +41,28 @@ public class PopUp extends AppCompatActivity {
 
         popUpDailyExtendText.setText("Daily water limit acquired\nDo you want to add more bottles to today's limit?");
 
-        popUpSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
-                        "userProfilePrefs", Context.MODE_PRIVATE);
-                int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        popUpSubmit.setOnClickListener(v -> {
+            SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                    "userProfilePrefs", Context.MODE_PRIVATE);
+            int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
 
-                if (popUpDailyExtendEdit.getText().toString().isEmpty()) {
-                    Toast.makeText(PopUp.this, "Type value before submitting", Toast.LENGTH_SHORT).show();
-                } else {
-                    int bottlesToExtend = Integer.parseInt(popUpDailyExtendEdit.getText().toString());
-                    int extendDailyWaterConsumption = bottlesToExtend * bottleCapacity;
+            if (popUpDailyExtendEdit.getText().toString().isEmpty()) {
+                Toast.makeText(PopUp.this, "Type value before submitting", Toast.LENGTH_SHORT).show();
+            } else {
+                int bottlesToExtend = Integer.parseInt(popUpDailyExtendEdit.getText().toString());
+                int extendDailyWaterConsumption = bottlesToExtend * bottleCapacity;
 
-                    SharedPreferences sharedPreferencesPopUp = getSharedPreferences("sharedPreferencesPopUp",
-                            Context.MODE_PRIVATE);
-                    SharedPreferences.Editor sharedPreferencesPopUpEditor = sharedPreferencesPopUp.edit();
-                    sharedPreferencesPopUpEditor.putInt("extendDailyWaterConsumption", extendDailyWaterConsumption);
-                    sharedPreferencesPopUpEditor.apply();
+                SharedPreferences sharedPreferencesPopUp = getSharedPreferences("sharedPreferencesPopUp",
+                        Context.MODE_PRIVATE);
+                SharedPreferences.Editor sharedPreferencesPopUpEditor = sharedPreferencesPopUp.edit();
+                sharedPreferencesPopUpEditor.putInt("extendDailyWaterConsumption", extendDailyWaterConsumption);
+                sharedPreferencesPopUpEditor.apply();
 
-                    MainActivity.popUpSubmitBoolean = true;
-                    Toast.makeText(PopUp.this, "Daily target extended", Toast.LENGTH_SHORT).show();
+//                    MainActivity.popUpSubmitBoolean = true;
+                Toast.makeText(PopUp.this, "Daily target extended", Toast.LENGTH_SHORT).show();
 
-                    Intent intent = new Intent(PopUp.this, MainActivity.class);
-                    startActivity(intent);
-                }
+                Intent intent = new Intent(PopUp.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }
