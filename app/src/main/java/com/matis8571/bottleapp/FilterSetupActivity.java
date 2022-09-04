@@ -17,9 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 public class FilterSetupActivity extends AppCompatActivity {
     private static final String TAG = "ProfileScreen";
 
-    TextView filterDateSetupText, userSetDaysToChangeText, userSetDailyWaterUsageText;
+    TextView filterDateSetupText, userSetDaysToChangeText, userSetDailyWaterUsageText, autoSetDailyWaterMessageText;
     EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit, dailyWaterConsumptionEdit;
-    Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton;
+    Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton,
+    autoSetDailyWaterButton;
+    private boolean booleanLocker = false;
     DateAndTime dateAndTime = new DateAndTime();
 
     @SuppressLint("SetTextI18n")
@@ -33,15 +35,17 @@ public class FilterSetupActivity extends AppCompatActivity {
         filterSetupToMainButton = findViewById(R.id.filterSetupToMainButton);
         filterSetupBackButton = findViewById(R.id.filterSetupBackButton);
         submitFilterButton = findViewById(R.id.submitFilterButton);
+        autoSetDailyWaterButton = findViewById(R.id.autoSetDailyWater);
         userSetDailyWaterUsageText = findViewById(R.id.userSetDailyWaterUsageMessage);
         userSetDaysToChangeText = findViewById(R.id.userSetDaysToChangeMessage);
         filterDateSetupText = findViewById(R.id.filterDateSetupMessage);
+        autoSetDailyWaterMessageText = findViewById(R.id.autoSetDailyWaterMessage);
         dailyWaterConsumptionEdit = findViewById(R.id.dailyWaterConsumptionInput);
         filterStartDayEdit = findViewById(R.id.filterStartDayInput);
         filterStartMonthEdit = findViewById(R.id.filterStartMonthInput);
         filterDaysToChangeEdit = findViewById(R.id.filterDaysToChangeInput);
-
-        userSetDailyWaterUsageText.setText("Daily water consumption:");
+        userSetDailyWaterUsageText.setText("Set your daily water:");
+        autoSetDailyWaterMessageText.setText("Or use auto count:");
         userSetDaysToChangeText.setText("Filter change after:");
         filterDateSetupText.setText("Filter start date:");
 
@@ -50,7 +54,10 @@ public class FilterSetupActivity extends AppCompatActivity {
             Log.d(TAG, "onClick: submitFilterButton");
             String filterDay = filterStartDayEdit.getText().toString();
             String filterMonth = filterStartMonthEdit.getText().toString();
-            int dailyWaterConsumption = Integer.parseInt(dailyWaterConsumptionEdit.getText().toString());
+            int dailyWaterConsumption = 0;
+            if(!booleanLocker){
+                dailyWaterConsumption = Integer.parseInt(dailyWaterConsumptionEdit.getText().toString());
+            }
             int userChangeAfterDays = Integer.parseInt(filterDaysToChangeEdit.getText().toString());
             int savedYear = dateAndTime.getYear();
 
@@ -58,10 +65,13 @@ public class FilterSetupActivity extends AppCompatActivity {
             SharedPreferences.Editor filterPrefsEditor = filterPrefs.edit();
             filterPrefsEditor.putString("filterDay", filterDay);
             filterPrefsEditor.putString("filterMonth", filterMonth);
-            filterPrefsEditor.putInt("dailyWaterConsumption", dailyWaterConsumption);
-            filterPrefsEditor.putInt("dailyWaterConsumptionOnlyRead", dailyWaterConsumption);
+            if(!booleanLocker){
+                filterPrefsEditor.putInt("dailyWaterConsumption", dailyWaterConsumption);
+                filterPrefsEditor.putInt("dailyWaterConsumptionOnlyRead", dailyWaterConsumption);
+            }
             filterPrefsEditor.putInt("userChangeAfterDays", userChangeAfterDays);
             filterPrefsEditor.putInt("savedYear", savedYear);
+            filterPrefsEditor.putBoolean("enableShowProfileButton", true);
             filterPrefsEditor.apply();
 
             Toast.makeText(FilterSetupActivity.this, "Filter updated", Toast.LENGTH_SHORT).show();
@@ -90,7 +100,7 @@ public class FilterSetupActivity extends AppCompatActivity {
                 Toast.makeText(FilterSetupActivity.this, "Submit now", Toast.LENGTH_SHORT).show();
             } else if (Integer.parseInt(dailyWaterConsumptionEdit.getText().toString()) < 0 ||
                     dailyWaterConsumptionEdit.getText().toString().isEmpty()) {
-                Toast.makeText(FilterSetupActivity.this, "Incorrect daily water demand",
+                Toast.makeText(FilterSetupActivity.this, "Set to more than 0",
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -107,6 +117,22 @@ public class FilterSetupActivity extends AppCompatActivity {
             Intent filterSetupToMainButtonIntent = new Intent(
                     FilterSetupActivity.this, MainActivity.class);
             startActivity(filterSetupToMainButtonIntent);
+        });
+
+        autoSetDailyWaterButton.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: autoSetDailyWaterButton");
+            SharedPreferences userProfilePrefsReceiver = getSharedPreferences("userProfilePrefs", Context.MODE_PRIVATE);
+            int userWeight = userProfilePrefsReceiver.getInt("userWeight", 0);
+
+            int autoDailyWaterConsumption = (userWeight * 30) + 250;
+            SharedPreferences filterPrefs = getSharedPreferences("filterPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor filterPrefsEditor = filterPrefs.edit();
+            filterPrefsEditor.putInt("dailyWaterConsumption", autoDailyWaterConsumption);
+            filterPrefsEditor.putInt("dailyWaterConsumptionOnlyRead", autoDailyWaterConsumption);
+            filterPrefsEditor.apply();
+
+            booleanLocker = true;
+            Toast.makeText(FilterSetupActivity.this, "Set to: " + autoDailyWaterConsumption, Toast.LENGTH_SHORT).show();
         });
     }
 }

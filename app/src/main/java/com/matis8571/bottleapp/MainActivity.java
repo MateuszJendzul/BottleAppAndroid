@@ -24,8 +24,9 @@ public class MainActivity extends AppCompatActivity {
 
     TextView welcomeText, profileSetupText, showProfileText, daysToChangeFilterText,
             showInMainDailyWaterConsumptionText, showInMainWaterDrunkText;
-    Button profileEditButton, showProfileButton, addBottleButton, showProfileButtonToast, removeBottleButton;
-    private int daysCounter, x, howMuchToDrink, waterToday;
+    Button profileEditButton, showProfileButton, addBottleButton, removeBottleButton, showProfileButtonToast,
+            removeBottleButtonToast, addBottleButtonToast;
+    private int howMuchToDrink, waterToday;
     private NotificationManagerCompat notificationManager;
     DateAndTime dateAndTime = new DateAndTime();
 
@@ -37,8 +38,9 @@ public class MainActivity extends AppCompatActivity {
         // with custom text "Starting"
         Log.d(TAG, "onCreate: Starting");
         notificationManager = NotificationManagerCompat.from(this);
-        mainCheckMethod();
+        dailyPropertiesReset();
         howMuchToDrink();
+        countToFilterEfficiency();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
@@ -48,12 +50,11 @@ public class MainActivity extends AppCompatActivity {
                 "mainPrefs", Context.MODE_PRIVATE);
 
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
-        boolean blockMainText = userProfilePrefsReceiver.getBoolean("blockMainText", false);
-        boolean enableShowProfileButton = userProfilePrefsReceiver.getBoolean("blockMainText", false);
+        boolean enableShowProfileButton = filterPrefsReceiver.getBoolean("enableShowProfileButton", false);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
         waterToday = mainPrefsReceiver.getInt("waterToday", 0);
+        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
 
         //make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         addBottleButton = findViewById(R.id.addBottle);
         removeBottleButton = findViewById(R.id.removeBottle);
         showProfileButtonToast = findViewById(R.id.showProfileButtonToast);
+        removeBottleButtonToast = findViewById(R.id.removeBottleToast);
+        addBottleButtonToast = findViewById(R.id.addBottleToast);
         welcomeText = findViewById(R.id.welcomeText);
         profileSetupText = findViewById(R.id.profileSetupText);
         showProfileText = findViewById(R.id.showProfileText);
@@ -68,24 +71,29 @@ public class MainActivity extends AppCompatActivity {
         showInMainDailyWaterConsumptionText = findViewById(R.id.showInMainDailyWaterConsumption);
         showInMainWaterDrunkText = findViewById(R.id.showInMainWaterDrunk);
 
-        showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+        if (howMuchToDrink <= 0) {
+            showInMainDailyWaterConsumptionText.setText("Water to drink: " + 0 + " ml");
+        } else {
+            showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+        }
         showInMainWaterDrunkText.setText("Today: " + waterToday + "ml of water");
         daysToChangeFilterText.setText("Days left to filter change: " + (userChangeAfterDays - daysCounter));
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
         showProfileText.setText("Show profile:");
 
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("daysCounter", daysCounter);
-        mainPrefsEditor.apply();
-
         //puts transparent button on top of inactive profile button
         // which is supposed to only show toast message and deactivate it
         // when profile button becomes active
         showProfileButton.setEnabled(false);
+        addBottleButton.setEnabled(false);
+        removeBottleButton.setEnabled(false);
         if (enableShowProfileButton) {
+            addBottleButtonToast.setEnabled(false);
+            removeBottleButtonToast.setEnabled(false);
             showProfileButtonToast.setEnabled(false);
+            addBottleButton.setEnabled(true);
+            removeBottleButton.setEnabled(true);
             showProfileButton.setEnabled(true);
         }
 
@@ -128,6 +136,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
         });
 
+        addBottleButtonToast.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: addBottleButton(inactive - toast");
+            Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
+        });
+
+        removeBottleButtonToast.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: removeBottleButton(inactive - toast");
+            Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
+        });
+
         //checks if there is still any amount of water left and then
         addBottleButton.setOnClickListener(v -> {
             if (howMuchToDrink > 0 && howMuchToDrink >= bottleCapacity) {
@@ -141,14 +159,18 @@ public class MainActivity extends AppCompatActivity {
             howMuchToDrink();
             howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
             waterToday = mainPrefsReceiver.getInt("waterToday", 0);
-            showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+            if (howMuchToDrink <= 0) {
+                showInMainDailyWaterConsumptionText.setText("Water to drink: " + 0 + " ml");
+            } else {
+                showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+            }
             showInMainWaterDrunkText.setText("Today: " + waterToday + "ml");
         });
 
         removeBottleButton.setOnClickListener(view -> {
             if (howMuchToDrink >= bottleCapacity) {
                 removeBottlesDone();
-            } else if (bottleCapacity > howMuchToDrink) {
+            } else if (howMuchToDrink < bottleCapacity) {
                 howMuchToDrink = bottleCapacity;
                 removeBottlesDone();
             } else {
@@ -157,21 +179,28 @@ public class MainActivity extends AppCompatActivity {
             howMuchToDrink();
             howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
             waterToday = mainPrefsReceiver.getInt("waterToday", 0);
-            showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+            if (howMuchToDrink <= 0) {
+                showInMainDailyWaterConsumptionText.setText("Water to drink: " + 0 + " ml");
+            } else {
+                showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
+            }
             showInMainWaterDrunkText.setText("Today: " + waterToday + "ml");
         });
     }
 
     /**
-     * Builds new notification pop up message with custom properties (Title, Test and Icon required)
+     * Builds new notification message with custom properties (Title, Test and Icon required)
      * on previously set channels. Then calls NotificationManagerCompat with .notify to call for a
-     * notification pop up.
+     * notification to show on phone screen.
      */
     //sends notification about how many days left till previously setup (by user) days cap
     public void notificationCh1Days() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
+        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
 
         String notificationCh1Title = "BottleApp";
         String notificationCh1Message;
@@ -180,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             notificationCh1Message = "Days left to filter change: " + (userChangeAfterDays - daysCounter);
         }
-
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(notificationCh1Title)
@@ -188,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
-
         notificationManager.notify(1, notification);
     }
 
@@ -203,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
-
         notificationManager.notify(2, notification);
     }
 
@@ -211,98 +237,127 @@ public class MainActivity extends AppCompatActivity {
      * Method called to initiate every Check Method once a day. CMs checks if current day equals X,
      * if false it executes its contents and then sets X as current day to reset it for today.
      */
-    public void mainCheckMethod() {
+    public void dailyPropertiesReset() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+
+        int x = mainPrefsReceiver.getInt("x", dateAndTime.getDay());
         if (x != dateAndTime.getDay()) {
-
-            countingDaysToFilterChange();
-            //to make it work use sharedP on x
-//            SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-//                    "mainPrefs", Context.MODE_PRIVATE);
-//            mainPrefsReceiver.edit().clear().apply();
-
+            countDaysToFilterChange();
+            mainPrefsReceiver.edit().remove("bottlesDone").apply();
+            mainPrefsReceiver.edit().remove("bottlesDoneExtend").apply();
+            mainPrefsReceiver.edit().remove("waterToday").apply();
             x = dateAndTime.getDay();
+            int howMuchToDrink = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
+            mainPrefsEditor.putInt("x", x).apply();
+            mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();
         }
     }
 
-    private void countingDaysToFilterChange() {
-        daysCounter = daysCounter + 1;
+    private void countToFilterEfficiency() {
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
+        int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        int bottlesDoneToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneToFilterEfficiency", 0);
+        int bottlesDoneExtendedToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneExtendedToFilterEfficiency", 0);
+        int countFilterEfficiency =
+                (filterEfficiency * 1000) - ((bottlesDoneToFilterEfficiency + bottlesDoneExtendedToFilterEfficiency) * bottleCapacity);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        mainPrefsEditor.putInt("countFilterEfficiency", countFilterEfficiency).apply();
+    }
+
+    private void countDaysToFilterChange() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
+        daysCounter++;
+        mainPrefsEditor.putInt("daysCounter", daysCounter).apply();
     }
 
     private void addBottlesDone() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
-        bottlesDone++;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDone", bottlesDone);
-        mainPrefsEditor.apply();
+        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
+        int bottlesDoneToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneToFilterEfficiency", 0);
+        bottlesDone++;
+        bottlesDoneToFilterEfficiency++;
+        mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
+        mainPrefsEditor.putInt("bottlesDoneToFilterEfficiency", bottlesDoneToFilterEfficiency).apply();
     }
 
     private void removeBottlesDone() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
-        bottlesDone--;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDone", bottlesDone);
-        mainPrefsEditor.apply();
+        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
+        int bottlesDoneToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneToFilterEfficiency", 0);
+        bottlesDone--;
+        bottlesDoneToFilterEfficiency--;
+        mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
+        mainPrefsEditor.putInt("bottlesDoneToFilterEfficiency", bottlesDoneToFilterEfficiency).apply();
     }
 
     private void addBottlesDoneExtended() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
-        bottlesDoneExtended++;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended);
-        mainPrefsEditor.apply();
+        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
+        int bottlesDoneExtendedToFilterEfficiency = mainPrefsReceiver.getInt(
+                "bottlesDoneExtendedToFilterEfficiency", 0);
+        bottlesDoneExtended++;
+        bottlesDoneExtendedToFilterEfficiency++;
+        mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
+        mainPrefsEditor.putInt("bottlesDoneExtendedToFilterEfficiency", bottlesDoneExtendedToFilterEfficiency).apply();
     }
 
     private void removeBottlesDoneExtended() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
-        bottlesDoneExtended--;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended);
-        mainPrefsEditor.apply();
+        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
+        int bottlesDoneExtendedToFilterEfficiency = mainPrefsReceiver.getInt(
+                "bottlesDoneExtendedToFilterEfficiency", 0);
+        bottlesDoneExtended--;
+        bottlesDoneExtendedToFilterEfficiency--;
+        mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
+        mainPrefsEditor.putInt("bottlesDoneExtendedToFilterEfficiency", bottlesDoneExtendedToFilterEfficiency).apply();
     }
 
     //counts on the base of previously settled properties how much more water does user need to drink today
     //to prevent values from resetting after closing app, update them in SharedPreferences
     @SuppressLint({"SetTextI18n", "ApplySharedPref"})
     private void howMuchToDrink() {
-        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "filterPrefs", Context.MODE_PRIVATE);
-        int dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
-
-        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
-                "userProfilePrefs", Context.MODE_PRIVATE);
-        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
-
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
-
         int howMuchToDrink = dailyWaterConsumption - (bottlesDone * bottleCapacity);
         int waterToday = (bottlesDone + bottlesDoneExtended) * bottleCapacity;
 
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        mainPrefsEditor.putInt("waterToday", waterToday);
-        mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink);
-        mainPrefsEditor.apply();
-
-        //clears mainPrefsReceiver context if set condition is achieved
-//        if(howMuchToDrink == 0){
-//            mainPrefsEditor.remove("bottlesDrunk");
-//            mainPrefsEditor.remove("bottlesDrunkExtended");
-//            mainPrefsEditor.apply();
-//        }
+        mainPrefsEditor.putInt("waterToday", waterToday).apply();
+        mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();
     }
 }

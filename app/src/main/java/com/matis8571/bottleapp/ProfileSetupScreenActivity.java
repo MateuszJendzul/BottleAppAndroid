@@ -59,12 +59,12 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
             } else {
                 Log.d(TAG, "onClick: submitButton");
                 //assign user input to a String array variables
-                int weight = Integer.parseInt(weightEdit.getText().toString());
+                int userWeight = Integer.parseInt(weightEdit.getText().toString());
                 int bottleCapacity = Integer.parseInt(bottleCapacityEdit.getText().toString());
                 int filterEfficiency = Integer.parseInt(filterEfficiencyEdit.getText().toString());
                 String profileName = nameEdit.getText().toString();
 
-                if (weight < 0 || weight > 150) {
+                if (userWeight < 0 || userWeight > 150) {
                     Toast.makeText(ProfileSetupScreenActivity.this, "Incorrect weight!\n0 - 150kg", Toast.LENGTH_SHORT).show();
                 } else if (bottleCapacity < 0 || bottleCapacity > 5000) {
                     Toast.makeText(ProfileSetupScreenActivity.this, "Incorrect bottle capacity!\n0 - 5000ml", Toast.LENGTH_SHORT).show();
@@ -79,14 +79,12 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
                     SharedPreferences userProfilePrefs = getSharedPreferences("userProfilePrefs", Context.MODE_PRIVATE);
                     //create SharedPreferences.Editor and assigns previously created SharedPreferences variable to it
                     SharedPreferences.Editor userProfilePrefsEditor = userProfilePrefs.edit();
-                    //to send specific variables put them under custom name "weight"
-                    // and then call which one you want to send int weight
-                    userProfilePrefsEditor.putInt("weight", weight);
+                    //to send specific variables put them under custom name "userWeight"
+                    // and then call which one you want to send int userWeight
+                    userProfilePrefsEditor.putInt("userWeight", userWeight);
                     userProfilePrefsEditor.putInt("bottleCapacity", bottleCapacity);
                     userProfilePrefsEditor.putInt("filterEfficiency", filterEfficiency);
                     userProfilePrefsEditor.putString("profileName", profileName);
-                    userProfilePrefsEditor.putBoolean("blockMainText", true);
-                    userProfilePrefsEditor.putBoolean("enableShowProfileButton", true);
                     //after setting everything .apply(); to the Editor
                     userProfilePrefsEditor.apply();
 
