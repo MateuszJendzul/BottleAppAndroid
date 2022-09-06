@@ -1,7 +1,7 @@
 package com.matis8571.bottleapp;
+//TODO add reset method, so after settled amount of days variables will reset to original values
 
 import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,11 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-
-import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
-import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -26,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     Button profileEditButton, showProfileButton, addBottleButton, removeBottleButton, showProfileButtonToast,
             removeBottleButtonToast, addBottleButtonToast;
     private int howMuchToDrink, waterToday;
-    private NotificationManagerCompat notificationManager;
     DateAndTime dateAndTime = new DateAndTime();
 
     @SuppressLint("SetTextI18n")
@@ -34,10 +28,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_screen);
         Log.d(TAG, "onCreate: Starting");
-        notificationManager = NotificationManagerCompat.from(this);
         dailyPropertiesReset();
         howMuchToDrink();
         countToFilterEfficiency();
+        startMyService();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
@@ -73,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + " ml");
         }
-        showInMainWaterDrunkText.setText("Today: " + waterToday + "ml of water");
+        showInMainWaterDrunkText.setText("Today: " + waterToday + "ml");
         daysToChangeFilterText.setText("Days left to filter change: " + (userChangeAfterDays - daysCounter));
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
@@ -91,23 +85,6 @@ public class MainActivity extends AppCompatActivity {
             addBottleButton.setEnabled(true);
             removeBottleButton.setEnabled(true);
             showProfileButton.setEnabled(true);
-        }
-
-        //sends notifications for the last 3 days of filter usage set date
-        if (daysCounter == (userChangeAfterDays - 3) || daysCounter == (userChangeAfterDays - 2) ||
-                daysCounter == (userChangeAfterDays - 1)) {
-            notificationCh1Days();
-        }
-
-        //checks if user consumed settled amount of water, if not, sends notifications at fixed hours
-        if (howMuchToDrink > 0) {
-            switch (dateAndTime.getTimeHour()) {
-                case 10:
-                case 14:
-                case 18:
-                    notificationCh2DrinkReminder();
-                    break;
-            }
         }
 
         profileEditButton.setOnClickListener(view -> {
@@ -194,51 +171,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Builds new notification message with custom properties (Title, Test and Icon required)
-     * on previously set channels. Then calls NotificationManagerCompat with .notify to call for a
-     * notification to show on phone screen.
-     */
-    //sends notification about how many days left till previously setup (by user) days cap
-    public void notificationCh1Days() {
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "filterPrefs", Context.MODE_PRIVATE);
-        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
-
-        String notificationCh1Title = "BottleApp";
-        String notificationCh1Message;
-        if ((userChangeAfterDays - daysCounter) == 0) {
-            notificationCh1Message = "Change filter now!";
-        } else {
-            notificationCh1Message = "Days left to filter change: " + (userChangeAfterDays - daysCounter);
-        }
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(notificationCh1Title)
-                .setContentText(notificationCh1Message)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .build();
-        notificationManager.notify(1, notification);
-    }
-
-    public void notificationCh2DrinkReminder() {
-        String title = "BottleApp";
-        String message = "Don't forget to drink more water!";
-
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(title)
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .build();
-        notificationManager.notify(2, notification);
-    }
-
-    /**
      * Method called to reset every given variables once a day. Checks if current day equals X,
      * if it's false executes its contents and then sets X as current day to reset it for today.
      */
@@ -277,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
         int bottlesDoneExtendedToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneExtendedToFilterEfficiency", 0);
         int countFilterEfficiency =
                 (filterEfficiency * 1000) - ((bottlesDoneToFilterEfficiency + bottlesDoneExtendedToFilterEfficiency) * bottleCapacity);
-        //TODO add notification
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         mainPrefsEditor.putInt("countFilterEfficiency", countFilterEfficiency).apply();
@@ -295,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
         daysCounter++;
         int countDaysToFilterChange = daysCounter - userChangeAfterDays;
-        //TODO add notification
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         mainPrefsEditor.putInt("daysCounter", daysCounter).apply();
@@ -395,5 +325,10 @@ public class MainActivity extends AppCompatActivity {
 
         mainPrefsEditor.putInt("waterToday", waterToday).apply();
         mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();
+    }
+
+    private void startMyService() {
+        Intent myServiceIntent = new Intent(MainActivity.this, MyService.class);
+        startService(myServiceIntent);
     }
 }

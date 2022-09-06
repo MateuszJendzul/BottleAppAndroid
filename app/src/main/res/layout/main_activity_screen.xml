@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml">
 
     <Button
         android:id="@+id/profileEditButton"
@@ -25,8 +26,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showProfileButton"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText,UnusedAttribute" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/addBottle"
@@ -46,8 +46,7 @@
         app:layout_constraintHorizontal_bias="0.054"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/addBottleToast"
@@ -68,8 +67,7 @@
         app:layout_constraintHorizontal_bias="0.054"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/removeBottle"
@@ -89,8 +87,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/removeBottleToast"
@@ -111,8 +108,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/showProfileButton"
@@ -132,8 +128,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.724"
-        tools:ignore="HardcodedText,UnusedAttribute" />
+        app:layout_constraintVertical_bias="0.724" />
 
     <Button
         android:id="@+id/showProfileButtonToast"
@@ -153,15 +148,14 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.724"
-        tools:ignore="HardcodedText,UnusedAttribute" />
+        app:layout_constraintVertical_bias="0.724" />
 
     <TextView
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/quicksand_bold"
@@ -174,8 +168,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/profileSetupText"
@@ -192,8 +185,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showProfileText"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/showProfileText"
@@ -209,14 +201,17 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.712"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.712" />
 
     <TextView
         android:id="@+id/daysToChangeFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="daysToChangeFilter"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -225,15 +220,18 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.281"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.281" />
 
     <TextView
         android:id="@+id/showInMainDailyWaterConsumption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="showInMainDailyWaterConsumption"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -241,15 +239,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/daysToChangeFilter"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/showInMainWaterDrunk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="showInMainWaterDrunk"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -257,7 +258,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showInMainDailyWaterConsumption"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

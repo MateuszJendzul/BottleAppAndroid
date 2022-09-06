@@ -4,12 +4,14 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Notifications extends AppCompatActivity {
     public static final String CHANNEL_1_ID = "channel1";
     public static final String CHANNEL_2_ID = "channel2";
+    public static final String CHANNEL_3_ID = "channel3";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,21 +29,29 @@ public class Notifications extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(
                     CHANNEL_1_ID,
-                    "Channel 1",
+                    "Channel_1",
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel1.setDescription("This is Channel 1");
+            channel1.setDescription("This is Channel_1");
 
             NotificationChannel channel2 = new NotificationChannel(
                     CHANNEL_2_ID,
-                    "Channel 2",
+                    "Channel_2",
                     NotificationManager.IMPORTANCE_LOW
             );
-            channel2.setDescription("This is Channel 2");
+            channel2.setDescription("This is Channel_2");
+
+            NotificationChannel channel3 = new NotificationChannel(
+                    CHANNEL_3_ID,
+                    "Channel_3",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel3.setDescription("This is Channel_3");
 
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel1);
             manager.createNotificationChannel(channel2);
+            manager.createNotificationChannel(channel3);
         }
     }
 }
