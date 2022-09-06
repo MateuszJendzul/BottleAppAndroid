@@ -34,7 +34,7 @@ public class DateAndTime extends AppCompatActivity {
     }
 
     /**
-     * Returns actual time of the day using java.util.Calendar.
+     * Return actual time of the day using java.util.Calendar.
      */
     public String getTime() {
         if (timeMinute < 10) {
@@ -45,7 +45,7 @@ public class DateAndTime extends AppCompatActivity {
     }
 
     /**
-     * Returns actual date using java.util.Calendar.
+     * Return actual date using java.util.Calendar.
      * If number representing month is one digital, adds 0 to make it two-digit.
      */
     public String getDate() {
@@ -56,13 +56,24 @@ public class DateAndTime extends AppCompatActivity {
         }
     }
 
+    /**
+     * Change to new variable at 23:59.
+     * @param toReset target value to reset
+     * @param resetTo set new value after reset
+     * @return returns new value
+     */
     public int dailyReset(int toReset, int resetTo) {
         if (timeHour == 23 && timeMinute == 59) {
             toReset = resetTo;
         }
-        return toReset;
+        return resetTo;
     }
 
+    /**
+     * At 23:59 return target boolean as false, otherwise return true.
+     * @param toReset target boolean to change
+     * @return returns false at 23:59
+     */
     public boolean dailyReset(boolean toReset) {
         if (timeHour == 23 && timeMinute == 59) {
             return !toReset;
