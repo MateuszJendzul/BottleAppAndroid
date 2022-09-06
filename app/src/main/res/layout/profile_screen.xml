@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".ProfileScreenActivity">
+    tools:context=".ProfileScreenActivity"
+    tools:ignore="HardcodedText,UnusedAttribute">
 
 
     <Button
@@ -16,8 +17,8 @@
         android:fontFamily="@font/quicksand_bold"
         android:foreground="@drawable/button_foreground"
         android:text="back"
-        android:textSize="14sp"
         android:textColor="@color/white"
+        android:textSize="14sp"
         app:backgroundTint="@color/button_color"
         app:iconTint="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,8 +26,7 @@
         app:layout_constraintHorizontal_bias="0.05"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976"
-        tools:ignore="HardcodedText,UnusedAttribute" />
+        app:layout_constraintVertical_bias="0.976" />
 
     <TextView
         android:id="@+id/profileMessage"
@@ -42,15 +42,18 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/profileScreenName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="profileScreenName"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -58,15 +61,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileMessage"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/profileScreenWeight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="profileScreenWeight"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -74,15 +80,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileScreenName"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/profileScreenFilterEfficiency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="profileScreenFilterEfficiency"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -90,15 +99,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileScreenBottleCapacity"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/filterStartDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="filterStartDate"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -106,15 +118,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileScreenFilterEfficiency"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/profileScreenBottleCapacity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="profileScreenBottleCapacity"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -122,15 +137,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profileScreenWeight"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/daysCounter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="daysCounter"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -138,15 +156,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dailyWaterConsumption"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/waterToday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="waterToday"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -155,15 +176,18 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/daysCounter"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/changeAfterDays"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="changeAfterDays"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -172,15 +196,18 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filterStartDate"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/dailyWaterConsumption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="dailyWaterConsumption"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -189,8 +216,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/changeAfterDays"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

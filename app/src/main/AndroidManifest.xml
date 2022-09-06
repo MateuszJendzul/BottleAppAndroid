@@ -23,9 +23,8 @@
         <activity android:name=".ProfileSetupScreenActivity" />
         <activity android:name=".ProfileScreenActivity" />
         <activity android:name=".FilterSetupActivity" />
-<!--        <activity-->
-<!--            android:name="PopUp"-->
-<!--            android:theme="@style/AppTheme.TranslucentBorders" />-->
+
+        <service android:name=".MyService" />
 
     </application>
 

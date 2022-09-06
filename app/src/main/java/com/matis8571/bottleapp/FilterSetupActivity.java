@@ -49,6 +49,7 @@ public class FilterSetupActivity extends AppCompatActivity {
         userSetDaysToChangeText.setText("Filter change after:");
         filterDateSetupText.setText("Filter start date:");
 
+        //button disabled until toast button is correctly updated
         submitFilterButton.setEnabled(false);
         submitFilterButton.setOnClickListener(v -> {
             Log.d(TAG, "onClick: submitFilterButton");

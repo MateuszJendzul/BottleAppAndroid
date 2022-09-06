@@ -40,8 +40,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
         filterStartDateText = findViewById(R.id.filterStartDate);
         waterTodayText = findViewById(R.id.waterToday);
 
-        //to get values from userProfilePrefsEditor create new SharedPreferences object userProfilePrefsReceiver
-        // use name made in the activity which variable is from "userProfilePrefs" (ProfileSetupScreen.class)
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -49,9 +47,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
 
-        //to receive values from other activity make new corresponding variable and assign it to
-        // a name of variable which was previously send to Editor "weightString" you can then add
-        // default value set to variables defaults
         String profileName = userProfilePrefsReceiver.getString("profileName", null);
         int weight = userProfilePrefsReceiver.getInt("weight", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
