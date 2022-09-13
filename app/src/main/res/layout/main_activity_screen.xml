@@ -226,7 +226,7 @@
         android:id="@+id/showInMainDailyWaterConsumption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
         android:foreground="@drawable/text_view_foreground"

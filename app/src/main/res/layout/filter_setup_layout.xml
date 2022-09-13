@@ -5,14 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".FilterSetupActivity">
+    tools:context=".FilterSetupActivity"
+    tools:ignore="HardcodedText,UnusedAttribute">
 
     <TextView
         android:id="@+id/userSetDaysToChangeMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="userSetDaysToChangeMessage"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -21,15 +26,18 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/filterDateSetupMessage"
-        app:layout_constraintVertical_bias="0.0"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/userSetDailyWaterUsageMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="userSetDailyWaterUsageMessage"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -46,7 +54,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
+        android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/text_view_foreground"
+        android:paddingHorizontal="8sp"
+        android:paddingVertical="2sp"
         android:text="userSetDailyWaterUsageMessage"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"

@@ -71,7 +71,7 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
                 } else if (filterEfficiency < 0 || filterEfficiency > 300) {
                     Toast.makeText(ProfileSetupScreenActivity.this, "Incorrect filter efficiency!\n0 - 300l", Toast.LENGTH_SHORT).show();
                 } else if (isNumeric(profileName)) {
-                    Toast.makeText(ProfileSetupScreenActivity.this, "Name contain numbers!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProfileSetupScreenActivity.this, "Name contains numbers!", Toast.LENGTH_SHORT).show();
                 } else {
                     //in order to send any variables between activities use SharedPreferences
                     // create variable name userProfilePrefs, and then a name to identify it with "userProfilePrefs"

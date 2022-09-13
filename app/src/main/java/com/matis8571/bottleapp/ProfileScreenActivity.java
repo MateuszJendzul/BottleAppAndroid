@@ -17,7 +17,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
 
     TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText,
             profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText,
-            dailyWaterConsumptionText, waterTodayText;
+            dailyWaterConsumptionText, waterTodayText, countDaysToFilterChangeText, daysToFilterChangeText;
     Button showToMainButton;
     private int savedDay, savedMonth, savedYear;
 
@@ -39,6 +39,8 @@ public class ProfileScreenActivity extends AppCompatActivity {
         daysCounterText = findViewById(R.id.daysCounter);
         filterStartDateText = findViewById(R.id.filterStartDate);
         waterTodayText = findViewById(R.id.waterToday);
+        countDaysToFilterChangeText = findViewById(R.id.countDaysToFilterChange);
+        daysToFilterChangeText = findViewById(R.id.daysToFilterChange);
 
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
@@ -48,7 +50,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
                 "mainPrefs", Context.MODE_PRIVATE);
 
         String profileName = userProfilePrefsReceiver.getString("profileName", null);
-        int weight = userProfilePrefsReceiver.getInt("weight", 0);
+        int userWeight = userProfilePrefsReceiver.getInt("userWeight", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
         String filterDay = filterPrefsReceiver.getString("filterDay", null);
@@ -57,6 +59,11 @@ public class ProfileScreenActivity extends AppCompatActivity {
         int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
         int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
+        int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
+        int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
+
+        double filterEfficiencyCountingProjection = (filterEfficiency - (double)filterEfficiencyCounting / 1000);
+
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
         savedDay = Integer.parseInt(filterDay);
@@ -66,14 +73,16 @@ public class ProfileScreenActivity extends AppCompatActivity {
         profilePrefsEditor.putInt("daysCounter", daysCounter);
         profilePrefsEditor.apply();
 
-        dailyWaterConsumptionText.setText("Daily water consumption: " + dailyWaterConsumptionOnlyRead + " ml");
-        weightText.setText("Weight: " + weight + " kg");
-        bottleCapacityText.setText("Bottle capacity: " + bottleCapacity + " ml");
-        filterEfficiencyText.setText("Filter efficiency: " + filterEfficiency + " l");
+        dailyWaterConsumptionText.setText("Daily water consumption: " + dailyWaterConsumptionOnlyRead + "ml");
+        weightText.setText("Weight: " + userWeight + "kg");
+        bottleCapacityText.setText("Bottle capacity: " + bottleCapacity + "ml");
+        filterEfficiencyText.setText("Filter efficiency: " + filterEfficiency + "l");
         profileNameText.setText("Name: " + profileName);
         filterStartDateText.setText("Filter start: " + filterStartDateString());
         profileMessageText.setText("Profile:");
         waterTodayText.setText("Water today: " + waterToday);
+        countDaysToFilterChangeText.setText("To filter change: " + daysToFilterChangeCounting + " days");
+        daysToFilterChangeText.setText("To filter change: " + filterEfficiencyCountingProjection + "l");
 
         if (daysCounter > userChangeAfterDays) {
             daysCounterText.setText("Change filter!\nLast change: " + daysCounter + " days ago.");
@@ -100,6 +109,10 @@ public class ProfileScreenActivity extends AppCompatActivity {
      * Displays date in dd/mm/yyyy format using previously saved user input in FilterSetup.java
      */
     private String filterStartDateString() {
-        return savedDay + "." + savedMonth + "." + savedYear;
+        if (savedMonth < 10) {
+            return savedDay + "." + "0" + savedMonth + "." + savedYear;
+        } else {
+            return savedDay + "." + savedMonth + "." + savedYear;
+        }
     }
 }
