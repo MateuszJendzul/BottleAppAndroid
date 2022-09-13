@@ -118,22 +118,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /*
-          Button used to check if user already consumed target amount of water by adding plus one bottle to
-          equation which is used to count how much water user have already consumed. If target is reached
-          or is going to be on negative (because user exceeded daily target by drinking more than
-          previously settled amount) sets displayed value as 0.
+          Use to add plus one bottle to bottlesDone or bottlesDoneExtended (depends on condition from
+          addBottlesDone().
           After adding bottle calls howMuchToDrink() method to do the math and updates Text messages on
           application display.
          */
         addBottleButton.setOnClickListener(v -> {
-            if (howMuchToDrink > 0 && howMuchToDrink >= bottleCapacity) {
-                addBottlesDone();
-            } else if (bottleCapacity > howMuchToDrink) {
-                howMuchToDrink = 0;
-                addBottlesDone();
-            } else {
-                addBottlesDoneExtended();
-            }
+            addBottlesDone();
             howMuchToDrink();
             howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
             waterToday = mainPrefsReceiver.getInt("waterToday", 0);
@@ -146,18 +137,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /*
-         Works almost the same as addBottleButton, but instead of adding removes one bottle and then updates Texts.
+         Works almost the same as addBottleButton, but instead of adding removes one bottle and then
+         updates Texts.
          */
         removeBottleButton.setOnClickListener(view -> {
-            if (howMuchToDrink >= bottleCapacity) {
-                removeBottlesDone();
-            } else //noinspection ConstantConditions
-                if (howMuchToDrink < bottleCapacity) {
-                    howMuchToDrink = bottleCapacity;
-                    removeBottlesDone();
-                } else {
-                    removeBottlesDoneExtended();
-                }
+            removeBottlesDone();
             howMuchToDrink();
             howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
             waterToday = mainPrefsReceiver.getInt("waterToday", 0);
@@ -233,71 +217,72 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds one to amount of bottles consumed by user. Uses SharedPreferences to store
-     * and load data in order to save it from activity shutdown wipe.
+     * Add one to bottlesDone if howMuchToDrink is equal or greater than bottleCapacity.
+     * If howMuchToDrink totals less than bottleCapacity set it to 0 and add one to bottlesDone,
+     * when howMuchToDrink equals 0 add one to bottlesDoneExtended.
+     * Uses SharedPreferences to store and load data in order to save it from activity shutdown wipe.
      */
     private void addBottlesDone() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         int bottlesDoneToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneToFilterEfficiency", 0);
-        bottlesDone++;
-        bottlesDoneToFilterEfficiency++;
-        mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
-        mainPrefsEditor.putInt("bottlesDoneToFilterEfficiency", bottlesDoneToFilterEfficiency).apply();
-    }
-
-    /**
-     * Removes one from amount of bottles consumed by user. Uses SharedPreferences to store
-     * and load data in order to save it from activity shutdown wipe.
-     */
-    private void removeBottlesDone() {
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
-        int bottlesDoneToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneToFilterEfficiency", 0);
-        bottlesDone--;
-        bottlesDoneToFilterEfficiency--;
-        mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
-        mainPrefsEditor.putInt("bottlesDoneToFilterEfficiency", bottlesDoneToFilterEfficiency).apply();
-    }
-
-    /**
-     * Adds one to extended amount of bottles consumed by user (if user decides to exceed
-     * settled daily consumption limit).
-     */
-    private void addBottlesDoneExtended() {
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
         int bottlesDoneExtendedToFilterEfficiency = mainPrefsReceiver.getInt(
                 "bottlesDoneExtendedToFilterEfficiency", 0);
-        bottlesDoneExtended++;
-        bottlesDoneExtendedToFilterEfficiency++;
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        if (howMuchToDrink > 0 && howMuchToDrink >= bottleCapacity) {
+            bottlesDone++;
+            bottlesDoneToFilterEfficiency++;
+        } else if (bottleCapacity > howMuchToDrink) {
+            howMuchToDrink = 0;
+            bottlesDone++;
+            bottlesDoneToFilterEfficiency++;
+        } else {
+            bottlesDoneExtended++;
+            bottlesDoneExtendedToFilterEfficiency++;
+        }
+        mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
+        mainPrefsEditor.putInt("bottlesDoneToFilterEfficiency", bottlesDoneToFilterEfficiency).apply();
         mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
         mainPrefsEditor.putInt("bottlesDoneExtendedToFilterEfficiency", bottlesDoneExtendedToFilterEfficiency).apply();
     }
 
     /**
-     * Removes one from extended amount of bottles consumed by user (if user decides to exceed
-     * settled daily consumption limit).
+     * Remove one from bottlesDone if howMuchToDrink is equal or greater than bottleCapacity.
+     * If howMuchToDrink totals less than bottleCapacity set it to equal as bottleCapacity and remove
+     * one from bottlesDone, when none of these conditions is true, then remove one from bottlesDoneExtended.
+     * Uses SharedPreferences to store and load data in order to save it from activity shutdown wipe.
      */
-    private void removeBottlesDoneExtended() {
+    private void removeBottlesDone() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
+        int bottlesDoneToFilterEfficiency = mainPrefsReceiver.getInt("bottlesDoneToFilterEfficiency", 0);
         int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
         int bottlesDoneExtendedToFilterEfficiency = mainPrefsReceiver.getInt(
                 "bottlesDoneExtendedToFilterEfficiency", 0);
-        bottlesDoneExtended--;
-        bottlesDoneExtendedToFilterEfficiency--;
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
+        if (howMuchToDrink >= bottleCapacity) {
+            bottlesDone--;
+        } else //noinspection ConstantConditions
+            if (howMuchToDrink < bottleCapacity) {
+                howMuchToDrink = bottleCapacity;
+                bottlesDone--;
+            } else {
+                bottlesDoneExtended--;
+                bottlesDoneToFilterEfficiency--;
+            }
+        mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
+        mainPrefsEditor.putInt("bottlesDoneToFilterEfficiency", bottlesDoneToFilterEfficiency).apply();
         mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
         mainPrefsEditor.putInt("bottlesDoneExtendedToFilterEfficiency", bottlesDoneExtendedToFilterEfficiency).apply();
     }
