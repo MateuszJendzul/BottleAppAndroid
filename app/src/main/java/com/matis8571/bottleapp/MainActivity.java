@@ -40,9 +40,14 @@ public class MainActivity extends AppCompatActivity {
                 "mainPrefs", Context.MODE_PRIVATE);
 
         boolean enableShowProfileButton = filterPrefsReceiver.getBoolean("enableShowProfileButton", false);
+        boolean unlockNotifications = filterPrefsReceiver.getBoolean("unlockNotifications", false);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
         waterToday = mainPrefsReceiver.getInt("waterToday", 0);
+
+        if (unlockNotifications) {
+            startNotifications();
+        }
 
         //make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
@@ -326,5 +331,10 @@ public class MainActivity extends AppCompatActivity {
     private void startMyService() {
         Intent myServiceIntent = new Intent(MainActivity.this, MyService.class);
         startService(myServiceIntent);
+    }
+
+    private void startNotifications() {
+        Intent notificationsIntent = new Intent(MainActivity.this, Notifications.class);
+        startService(notificationsIntent);
     }
 }

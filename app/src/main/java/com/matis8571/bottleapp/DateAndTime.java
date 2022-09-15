@@ -5,7 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Calendar;
 
 public class DateAndTime extends AppCompatActivity {
-    private int day, month, year, timeHour, timeMinute, timeSecond;
+    @SuppressWarnings("FieldMayBeFinal")
+    private int day, month, year, timeHour, timeMinute, timeSeconds;
     Calendar calendar = Calendar.getInstance();
 
     public DateAndTime() {
@@ -14,7 +15,7 @@ public class DateAndTime extends AppCompatActivity {
         year = calendar.get(Calendar.YEAR);
         timeHour = calendar.get(Calendar.HOUR_OF_DAY);
         timeMinute = calendar.get(Calendar.MINUTE);
-        timeSecond = calendar.get(Calendar.SECOND);
+        timeSeconds = calendar.get(Calendar.SECOND);
     }
 
     public int getDay() {
@@ -29,8 +30,16 @@ public class DateAndTime extends AppCompatActivity {
         return year;
     }
 
+    public int getTimeMinute() {
+        return timeMinute;
+    }
+
     public int getTimeHour() {
         return timeHour;
+    }
+
+    public int getTimeSeconds(){
+        return timeSeconds;
     }
 
     /**
