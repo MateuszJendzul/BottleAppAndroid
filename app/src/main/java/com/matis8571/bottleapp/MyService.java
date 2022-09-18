@@ -21,7 +21,7 @@ public class MyService extends Service {
     private static final String TAG = "MyService";
     private NotificationManagerCompat notificationManager;
     private final Handler handler = new Handler();
-    private final int delay = 500;
+    private final int delay = 1000;
     private int xCh2, xCh1, xCh3;
     DateAndTime dateAndTime = new DateAndTime();
 
