@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
             startNotifications();
         }
 
-        //make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
         showProfileButton = findViewById(R.id.showProfileButton);
         addBottleButton = findViewById(R.id.addBottle);
