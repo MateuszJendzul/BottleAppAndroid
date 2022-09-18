@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         countToFilterEfficiency();
         countDaysToFilterChange();
         startMyService();
+        startNotifications();
         userChangeAfterDaysFilterReset();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(

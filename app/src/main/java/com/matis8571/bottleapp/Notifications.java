@@ -5,11 +5,8 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-
-import androidx.appcompat.app.AppCompatActivity;
 
 public class Notifications extends Service {
     private static final String TAG = "Notifications";
@@ -41,27 +38,29 @@ public class Notifications extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel1 = new NotificationChannel(
                     CHANNEL_1_ID,
-                    "Channel_1",
+                    "Days to filter change",
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel1.setDescription("This is Channel_1");
+            channel1.setDescription("Send notifications for the last 3 days of filter usage user set date");
 
             NotificationChannel channel2 = new NotificationChannel(
                     CHANNEL_2_ID,
-                    "Channel_2",
-                    NotificationManager.IMPORTANCE_LOW
+                    "Daily water drink",
+                    NotificationManager.IMPORTANCE_DEFAULT
             );
-            channel2.setDescription("This is Channel_2");
+            channel2.setDescription("Every hour check if user consumed settled amount of water " +
+                    "if not, send notification");
 
             NotificationChannel channel3 = new NotificationChannel(
                     CHANNEL_3_ID,
-                    "Channel_3",
+                    "Remaining filter efficiency",
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel3.setDescription("This is Channel_3");
+            channel3.setDescription("Send notifications if filter have less than 10l of its efficiency " +
+                    "until expiration");
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            NotificationManager notificationManager  = getSystemService(NotificationManager.class);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel1);
             notificationManager.createNotificationChannel(channel2);
             notificationManager.createNotificationChannel(channel3);

@@ -71,6 +71,7 @@ public class DateAndTime extends AppCompatActivity {
      * @param resetTo set new value after reset
      * @return returns new value
      */
+    @SuppressWarnings({"ParameterCanBeLocal", "UnusedAssignment"})
     public int dailyReset(int toReset, int resetTo) {
         if (timeHour == 23 && timeMinute == 59) {
             toReset = resetTo;
