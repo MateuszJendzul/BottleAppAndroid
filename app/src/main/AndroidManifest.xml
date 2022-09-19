@@ -20,10 +20,12 @@
             </intent-filter>
         </activity>
         <!-- add new activity here so app won't collapse, add activity everytime when you add new layout -->
+
         <activity android:name=".ProfileSetupScreenActivity" />
         <activity android:name=".ProfileScreenActivity" />
         <activity android:name=".FilterSetupActivity" />
 
+        <service android:name=".Notifications" />
         <service android:name=".MyService" />
 
     </application>
