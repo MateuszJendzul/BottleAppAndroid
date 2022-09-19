@@ -1,6 +1,5 @@
 package com.matis8571.bottleapp;
 
-
 import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
 import static com.matis8571.bottleapp.Notifications.CHANNEL_3_ID;
@@ -22,7 +21,6 @@ public class MyService extends Service {
     private NotificationManagerCompat notificationManager;
     private final Handler handler = new Handler();
     private final int delay = 1000;
-    private int xCh2, xCh1, xCh3;
     DateAndTime dateAndTime = new DateAndTime();
 
     @Override
@@ -36,6 +34,9 @@ public class MyService extends Service {
                 "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         boolean enableShowProfileButton = filterPrefsReceiver.getBoolean("enableShowProfileButton", false);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
@@ -45,26 +46,34 @@ public class MyService extends Service {
 
         // Refresh containing code every value (seconds) defined by delay variable
         if (enableShowProfileButton) {
+            //noinspection FieldMayBeFinal
             handler.postDelayed(new Runnable() {
+                int xCh1 = mainPrefsReceiver.getInt("xCh1", 0);
+                int xCh2 = mainPrefsReceiver.getInt("xCh2", 0);
+                int xCh3 = mainPrefsReceiver.getInt("xCh3", 0);
+
                 public void run() { //code to run below
                     // Send notifications for the last 3 days of filter usage user set date
                     if (daysToFilterChangeCounting <= 3 && dateAndTime.getDay() != xCh1) {
                         notificationCh1DaysLeft();
-                        xCh1 = dateAndTime.getDay();
+                        int xCh1 = dateAndTime.getDay();
+                        mainPrefsEditor.putInt("xCh1", xCh1).apply();
                     }
                     // Every hour check if user consumed settled amount of water, if not, send notification
                     else if (howMuchToDrink > 0) {
                         if (dateAndTime.getTimeHour() != xCh2 && dateAndTime.getTimeMinute() == 0
                                 && dateAndTime.getTimeSeconds() == 0) {
                             notificationCh2DrinkReminder();
-                            xCh2 = dateAndTime.getTimeHour();
+                            int xCh2 = dateAndTime.getTimeHour();
+                            mainPrefsEditor.putInt("xCh2", xCh2).apply();
                         }
                     }
                     // Check if filter still can filter some water based on it efficiency, send notifications
                     //  if filter have less than 10l of its efficiency until expiration.
                     else if (howMuchToFilterLeft <= 10 && dateAndTime.getTimeHour() != xCh3) {
                         notificationCh3FilterEfficiencyWater();
-                        xCh3 = dateAndTime.getTimeHour();
+                        int xCh3 = dateAndTime.getTimeHour();
+                        mainPrefsEditor.putInt("xCh3", xCh3).apply();
                     }
                     handler.postDelayed(this, delay);
                 }
@@ -120,7 +129,7 @@ public class MyService extends Service {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
         notificationManager.notify(2, notification);

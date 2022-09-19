@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity_screen);
         Log.d(TAG, "onCreate: Starting");
         dailyPropertiesReset();
+        monthlyPropertiesReset();
         howMuchToDrink();
         countToFilterEfficiency();
         countDaysToFilterChange();
         startMyService();
-        startNotifications();
         userChangeAfterDaysFilterReset();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             startNotifications();
         }
 
+        //make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
         showProfileButton = findViewById(R.id.showProfileButton);
         addBottleButton = findViewById(R.id.addBottle);
@@ -166,9 +167,9 @@ public class MainActivity extends AppCompatActivity {
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
-        int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
-        int filterEfficiencyCounting = ((bottlesDone + bottlesDoneExtended) * bottleCapacity);
+        int bottlesDoneToEfficiency = mainPrefsReceiver.getInt("bottlesDoneToEfficiency", 0);
+        int bottlesDoneExtendedToEfficiency = mainPrefsReceiver.getInt("bottlesDoneExtendedToEfficiency", 0);
+        int filterEfficiencyCounting = ((bottlesDoneToEfficiency + bottlesDoneExtendedToEfficiency) * bottleCapacity);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         mainPrefsEditor.putInt("filterEfficiencyCounting", filterEfficiencyCounting).apply();
@@ -186,8 +187,8 @@ public class MainActivity extends AppCompatActivity {
                 "filterPrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-
         int x = mainPrefsReceiver.getInt("x", 0);
+
         if (x != dateAndTime.getDay()) {
             addToDaysCounter();
             mainPrefsReceiver.edit().remove("bottlesDone").apply();
@@ -197,6 +198,23 @@ public class MainActivity extends AppCompatActivity {
             x = dateAndTime.getDay();
             mainPrefsEditor.putInt("x", x).apply();
             mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();
+        }
+    }
+
+    /**
+     * Similar to daily variable, call to reset every given variable once a month, or initiate any method.
+     */
+    private void monthlyPropertiesReset() {
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        int x = mainPrefsReceiver.getInt("x", 0);
+        int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
+
+        if (x == userChangeAfterDays) {
+            mainPrefsReceiver.edit().remove("bottlesDoneExtendedToEfficiency").apply();
+            mainPrefsReceiver.edit().remove("bottlesDoneToEfficiency").apply();
         }
     }
 
@@ -258,7 +276,9 @@ public class MainActivity extends AppCompatActivity {
             bottlesDoneExtended++;
         }
         mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
+        mainPrefsEditor.putInt("bottlesDoneToEfficiency", bottlesDone).apply();
         mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
+        mainPrefsEditor.putInt("bottlesDoneExtendedToEfficiency", bottlesDoneExtended).apply();
     }
 
     /**
@@ -287,7 +307,9 @@ public class MainActivity extends AppCompatActivity {
                 bottlesDoneExtended--;
             }
         mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
+        mainPrefsEditor.putInt("bottlesDoneToEfficiency", bottlesDone).apply();
         mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
+        mainPrefsEditor.putInt("bottlesDoneExtendedToEfficiency", bottlesDoneExtended).apply();
     }
 
     /**

@@ -46,7 +46,7 @@ public class Notifications extends Service {
             NotificationChannel channel2 = new NotificationChannel(
                     CHANNEL_2_ID,
                     "Daily water drink",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
             );
             channel2.setDescription("Every hour check if user consumed settled amount of water " +
                     "if not, send notification");
