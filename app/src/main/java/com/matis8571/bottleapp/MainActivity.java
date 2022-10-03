@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,17 +17,17 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     TextView welcomeText, profileSetupText, showProfileText, daysToChangeFilterMainText,
-            showInMainDailyWaterConsumptionText, showInMainWaterDrunkText;
-    Button profileEditButton, showProfileButton, addBottleButton, removeBottleButton, showProfileButtonToast,
-            removeBottleButtonToast, addBottleButtonToast;
-    private int howMuchToDrink, waterToday;
+            showInMainDailyWaterConsumptionText, showInMainWaterDrunkText, helpText;
+    Button profileEditButton, showProfileButton, addWaterButton, removeWaterButton, showProfileButtonToast,
+            removeWaterButtonToast, addWaterButtonToast, waterConsumptionTipButton;
+    EditText waterUserInputEdit;
     DateAndTime dateAndTime = new DateAndTime();
-
+//TODO try to make onr variable for both, bottles and userInput
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity_screen);
         Log.d(TAG, "onCreate: Starting");
+        setContentView(R.layout.main_activity_screen);
         dailyPropertiesReset();
         monthlyPropertiesReset();
         howMuchToDrink();
@@ -43,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
         boolean enableShowProfileButton = filterPrefsReceiver.getBoolean("enableShowProfileButton", false);
         boolean unlockNotifications = filterPrefsReceiver.getBoolean("unlockNotifications", false);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
-        howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
-        waterToday = mainPrefsReceiver.getInt("waterToday", 0);
+        int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
+        int howMuchToDrinkMain = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+        int waterTodayMain = mainPrefsReceiver.getInt("waterToday", 0);
 
         if (unlockNotifications) {
             startNotifications();
@@ -53,46 +55,52 @@ public class MainActivity extends AppCompatActivity {
         //make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
         showProfileButton = findViewById(R.id.showProfileButton);
-        addBottleButton = findViewById(R.id.addBottle);
-        removeBottleButton = findViewById(R.id.removeBottle);
+        addWaterButton = findViewById(R.id.addBottle);
+        removeWaterButton = findViewById(R.id.removeBottle);
+        waterConsumptionTipButton = findViewById(R.id.waterConsumptionTip);
         showProfileButtonToast = findViewById(R.id.showProfileButtonToast);
-        removeBottleButtonToast = findViewById(R.id.removeBottleToast);
-        addBottleButtonToast = findViewById(R.id.addBottleToast);
+        removeWaterButtonToast = findViewById(R.id.removeBottleToast);
+        addWaterButtonToast = findViewById(R.id.addBottleToast);
         welcomeText = findViewById(R.id.welcomeText);
         profileSetupText = findViewById(R.id.profileSetupText);
         showProfileText = findViewById(R.id.showProfileText);
         daysToChangeFilterMainText = findViewById(R.id.daysToChangeFilter);
         showInMainDailyWaterConsumptionText = findViewById(R.id.showInMainDailyWaterConsumption);
         showInMainWaterDrunkText = findViewById(R.id.showInMainWaterDrunk);
+        helpText = findViewById(R.id.helpText);
+        waterUserInputEdit = findViewById(R.id.waterUserInput);
 
-        if (howMuchToDrink <= 0) {
+        if (howMuchToDrinkMain < 1) {
             showInMainDailyWaterConsumptionText.setText("Water to drink: " + 0 + "ml");
         } else {
-            showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + "ml");
+            showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrinkMain + "ml");
         }
-        showInMainWaterDrunkText.setText("Today: " + waterToday + "ml");
+
+        showInMainWaterDrunkText.setText("Today: " + waterTodayMain + "ml");
         daysToChangeFilterMainText.setText("Days left to filter change: " + daysToFilterChangeCounting);
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
         showProfileText.setText("Show profile:");
+        helpText.setText("Tap for help:");
 
         //puts transparent buttons on top of original inactive buttons which are supposed to only show
         // toast message and deactivate when received boolean variable becomes true
         showProfileButton.setEnabled(false);
-        addBottleButton.setEnabled(false);
-        removeBottleButton.setEnabled(false);
+        addWaterButton.setEnabled(false);
+        removeWaterButton.setEnabled(false);
         if (enableShowProfileButton) {
-            addBottleButtonToast.setEnabled(false);
-            removeBottleButtonToast.setEnabled(false);
+            addWaterButtonToast.setEnabled(false);
+            removeWaterButtonToast.setEnabled(false);
             showProfileButtonToast.setEnabled(false);
-            addBottleButton.setEnabled(true);
-            removeBottleButton.setEnabled(true);
+            addWaterButton.setEnabled(true);
+            removeWaterButton.setEnabled(true);
             showProfileButton.setEnabled(true);
         }
 
         profileEditButton.setOnClickListener(view -> {
             Log.d(TAG, "onClick: profileEditButton");
-            Intent profileEditButtonIntent = new Intent(MainActivity.this, ProfileSetupScreenActivity.class);
+            Intent profileEditButtonIntent = new Intent(
+                    MainActivity.this, ProfileSetupScreenActivity.class);
             startActivity(profileEditButtonIntent);
         });
 
@@ -100,25 +108,32 @@ public class MainActivity extends AppCompatActivity {
             if (enableShowProfileButton) {
                 Log.d(TAG, "onClick: showProfileButton(active)");
                 countToFilterEfficiency();
-                Intent showProfileButtonIntent = new Intent(MainActivity.this, ProfileScreenActivity.class);
+                Intent showProfileButtonIntent = new Intent(
+                        MainActivity.this, ProfileScreenActivity.class);
                 startActivity(showProfileButtonIntent);
             }
+        });
+
+        waterConsumptionTipButton.setOnClickListener(view -> {
+            Intent waterConsumptionTipButtonIntent = new Intent(
+                    MainActivity.this, WaterConsumptionTip.class);
+            startActivity(waterConsumptionTipButtonIntent);
         });
 
         showProfileButtonToast.setOnClickListener(v -> {
             Log.d(TAG, "onClick: showProfileButton(inactive - toast)");
             //shows little pop up on screen with custom text
-            Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Edit profile first", Toast.LENGTH_SHORT).show();
         });
 
-        addBottleButtonToast.setOnClickListener(v -> {
+        addWaterButtonToast.setOnClickListener(v -> {
             Log.d(TAG, "onClick: addBottleButton(inactive - toast");
-            Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Edit profile first", Toast.LENGTH_SHORT).show();
         });
 
-        removeBottleButtonToast.setOnClickListener(v -> {
+        removeWaterButtonToast.setOnClickListener(v -> {
             Log.d(TAG, "onClick: removeBottleButton(inactive - toast");
-            Toast.makeText(MainActivity.this, "Profile not setup", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "Edit profile first", Toast.LENGTH_SHORT).show();
         });
 
         /*
@@ -127,12 +142,12 @@ public class MainActivity extends AppCompatActivity {
           After adding bottle calls howMuchToDrink() method to do the math and updates Text messages on
           application display.
          */
-        addBottleButton.setOnClickListener(v -> {
+        addWaterButton.setOnClickListener(v -> {
             addBottlesDone();
             howMuchToDrink();
-            howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
-            waterToday = mainPrefsReceiver.getInt("waterToday", 0);
-            if (howMuchToDrink <= 0) {
+            int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
+            int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+            if (howMuchToDrink < 1) {
                 showInMainDailyWaterConsumptionText.setText("Water to drink: " + 0 + "ml");
             } else {
                 showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + "ml");
@@ -144,12 +159,12 @@ public class MainActivity extends AppCompatActivity {
          Works almost the same as addBottleButton, but instead of adding removes one bottle and then
          updates Texts.
          */
-        removeBottleButton.setOnClickListener(view -> {
+        removeWaterButton.setOnClickListener(view -> {
             removeBottlesDone();
             howMuchToDrink();
-            howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
-            waterToday = mainPrefsReceiver.getInt("waterToday", 0);
-            if (howMuchToDrink <= 0) {
+            int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
+            int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+            if (howMuchToDrink < 1) {
                 showInMainDailyWaterConsumptionText.setText("Water to drink: " + 0 + "ml");
             } else {
                 showInMainDailyWaterConsumptionText.setText("Water to drink: " + howMuchToDrink + "ml");
@@ -169,7 +184,9 @@ public class MainActivity extends AppCompatActivity {
                 "mainPrefs", Context.MODE_PRIVATE);
         int bottlesDoneToEfficiency = mainPrefsReceiver.getInt("bottlesDoneToEfficiency", 0);
         int bottlesDoneExtendedToEfficiency = mainPrefsReceiver.getInt("bottlesDoneExtendedToEfficiency", 0);
-        int filterEfficiencyCounting = ((bottlesDoneToEfficiency + bottlesDoneExtendedToEfficiency) * bottleCapacity);
+        int countingWaterUserInputToEfficiency = mainPrefsReceiver.getInt("countingWaterUserInputToEfficiency", 0);
+        int filterEfficiencyCounting = ((bottlesDoneToEfficiency + bottlesDoneExtendedToEfficiency) *
+                bottleCapacity) + countingWaterUserInputToEfficiency;
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         mainPrefsEditor.putInt("filterEfficiencyCounting", filterEfficiencyCounting).apply();
@@ -194,6 +211,7 @@ public class MainActivity extends AppCompatActivity {
             mainPrefsReceiver.edit().remove("bottlesDone").apply();
             mainPrefsReceiver.edit().remove("bottlesDoneExtend").apply();
             mainPrefsReceiver.edit().remove("waterToday").apply();
+            mainPrefsReceiver.edit().remove("countingWaterUserInput").apply();
             int howMuchToDrink = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
             x = dateAndTime.getDay();
             mainPrefsEditor.putInt("x", x).apply();
@@ -215,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
         if (x == userChangeAfterDays) {
             mainPrefsReceiver.edit().remove("bottlesDoneExtendedToEfficiency").apply();
             mainPrefsReceiver.edit().remove("bottlesDoneToEfficiency").apply();
+            mainPrefsReceiver.edit().remove("countingWaterUserInputToEfficiency").apply();
         }
     }
 
@@ -245,7 +264,11 @@ public class MainActivity extends AppCompatActivity {
                 "filterPrefs", Context.MODE_PRIVATE);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        int daysToFilterChangeCounting = userChangeAfterDays - daysCounter;
+        int daysToFilterChangeCounting = 0;
+        if(userChangeAfterDays > 0) {
+             daysToFilterChangeCounting = userChangeAfterDays - daysCounter;
+        }
+
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         mainPrefsEditor.putInt("daysToFilterChangeCounting", daysToFilterChangeCounting).apply();
@@ -267,14 +290,29 @@ public class MainActivity extends AppCompatActivity {
         int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
-        if (howMuchToDrink > 0 && howMuchToDrink >= bottleCapacity) {
-            bottlesDone++;
-        } else if (bottleCapacity > howMuchToDrink) {
-            howMuchToDrink = 0;
-            bottlesDone++;
+        int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+        if (howMuchToDrink > 0) {
+            if (waterUserInputEdit.getText().toString().isEmpty()) {
+                bottlesDone++;
+            } else {
+                int countingWaterUserInput = mainPrefsReceiver.getInt("countingWaterUserInput",0);
+                countingWaterUserInput = countingWaterUserInput + Integer.parseInt(waterUserInputEdit.getText().toString());
+                mainPrefsEditor.putInt("countingWaterUserInput", countingWaterUserInput).apply();
+                mainPrefsEditor.putInt("countingWaterUserInputToEfficiency", countingWaterUserInput).apply();
+            }
+        } else if (howMuchToDrink <= 0) {
+            if (waterUserInputEdit.getText().toString().isEmpty()) {
+                bottlesDoneExtended++;
+            } else {
+                int countingWaterUserInput = mainPrefsReceiver.getInt("countingWaterUserInput",0);
+                countingWaterUserInput = countingWaterUserInput + Integer.parseInt(waterUserInputEdit.getText().toString());
+                mainPrefsEditor.putInt("countingWaterUserInput", countingWaterUserInput).apply();
+                mainPrefsEditor.putInt("countingWaterUserInputToEfficiency", countingWaterUserInput).apply();
+            }
         } else {
-            bottlesDoneExtended++;
+            Toast.makeText(MainActivity.this, "Wrong water amount", Toast.LENGTH_SHORT).show();
         }
+
         mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
         mainPrefsEditor.putInt("bottlesDoneToEfficiency", bottlesDone).apply();
         mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
@@ -290,22 +328,35 @@ public class MainActivity extends AppCompatActivity {
     private void removeBottlesDone() {
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
-                "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
-        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
-        if (howMuchToDrink >= bottleCapacity) {
-            bottlesDone--;
-        } else //noinspection ConstantConditions
-            if (howMuchToDrink < bottleCapacity) {
-                howMuchToDrink = bottleCapacity;
+        int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+
+        if (howMuchToDrink > 0) {
+            if (waterUserInputEdit.getText().toString().isEmpty()) {
                 bottlesDone--;
             } else {
-                bottlesDoneExtended--;
+                int countingWaterUserInput = mainPrefsReceiver.getInt("countingWaterUserInput",0);
+                countingWaterUserInput = countingWaterUserInput - Integer.parseInt(waterUserInputEdit.getText().toString());
+                mainPrefsEditor.putInt("countingWaterUserInput", countingWaterUserInput).apply();
+                mainPrefsEditor.putInt("countingWaterUserInputToEfficiency", countingWaterUserInput).apply();
+
             }
+        } else if (howMuchToDrink <= 0) {
+            if (waterUserInputEdit.getText().toString().isEmpty()) {
+                bottlesDoneExtended--;
+            } else {
+                int countingWaterUserInput = mainPrefsReceiver.getInt("countingWaterUserInput",0);
+                countingWaterUserInput = countingWaterUserInput - Integer.parseInt(waterUserInputEdit.getText().toString());
+                mainPrefsEditor.putInt("countingWaterUserInput", countingWaterUserInput).apply();
+                mainPrefsEditor.putInt("countingWaterUserInputToEfficiency", countingWaterUserInput).apply();
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "Wrong water amount", Toast.LENGTH_SHORT).show();
+        }
+
         mainPrefsEditor.putInt("bottlesDone", bottlesDone).apply();
         mainPrefsEditor.putInt("bottlesDoneToEfficiency", bottlesDone).apply();
         mainPrefsEditor.putInt("bottlesDoneExtended", bottlesDoneExtended).apply();
@@ -326,12 +377,13 @@ public class MainActivity extends AppCompatActivity {
                 "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int countingWaterUserInput = mainPrefsReceiver.getInt("countingWaterUserInput", 0);
         int dailyWaterConsumption = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int bottlesDone = mainPrefsReceiver.getInt("bottlesDone", 0);
         int bottlesDoneExtended = mainPrefsReceiver.getInt("bottlesDoneExtended", 0);
-        int howMuchToDrink = dailyWaterConsumption - (bottlesDone * bottleCapacity);
-        int waterToday = (bottlesDone + bottlesDoneExtended) * bottleCapacity;
+        int howMuchToDrink = dailyWaterConsumption - ((bottlesDone + bottlesDoneExtended) * bottleCapacity) - countingWaterUserInput;
+        int waterToday = ((bottlesDone + bottlesDoneExtended) * bottleCapacity) + countingWaterUserInput;
 
         mainPrefsEditor.putInt("waterToday", waterToday).apply();
         mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();

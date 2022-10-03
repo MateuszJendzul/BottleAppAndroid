@@ -34,7 +34,7 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
         setupToMainButton = findViewById(R.id.setupToMainButton);
         submitButton = findViewById(R.id.submitChangesButton);
         setupMessageText = findViewById(R.id.profileMessage);
-        nameEdit = findViewById(R.id.setupProfileName);
+        nameEdit = findViewById(R.id.amountToDrink);
         weightEdit = findViewById(R.id.setupWeight);
         filterEfficiencyEdit = findViewById(R.id.setupFilterEfficiency);
         bottleCapacityEdit = findViewById(R.id.setupBottleCapacity);

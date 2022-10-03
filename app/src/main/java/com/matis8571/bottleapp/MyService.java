@@ -34,29 +34,28 @@ public class MyService extends Service {
                 "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefs = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         boolean enableShowProfileButton = filterPrefsReceiver.getBoolean("enableShowProfileButton", false);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
         int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
+        int xCh1 = mainPrefsReceiver.getInt("xCh1", 0);
+        int xCh2 = mainPrefsReceiver.getInt("xCh2", 0);
+        int xCh3 = mainPrefsReceiver.getInt("xCh3", 0);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
 
         // Refresh containing code every value (seconds) defined by delay variable
         if (enableShowProfileButton) {
             //noinspection FieldMayBeFinal
             handler.postDelayed(new Runnable() {
-                int xCh1 = mainPrefsReceiver.getInt("xCh1", 0);
-                int xCh2 = mainPrefsReceiver.getInt("xCh2", 0);
-                int xCh3 = mainPrefsReceiver.getInt("xCh3", 0);
-
                 public void run() { //code to run below
                     // Send notifications for the last 3 days of filter usage user set date
                     if (daysToFilterChangeCounting <= 3 && dateAndTime.getDay() != xCh1) {
                         notificationCh1DaysLeft();
                         int xCh1 = dateAndTime.getDay();
+
                         mainPrefsEditor.putInt("xCh1", xCh1).apply();
                     }
                     // Every hour check if user consumed settled amount of water, if not, send notification

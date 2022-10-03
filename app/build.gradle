@@ -5,16 +5,16 @@ plugins {
 android {
     signingConfigs {
         debug {
-            storeFile file('C:\\AndroidApps\\key.jks')
-            keyPassword 'qwerty123'
-            storePassword 'qwerty123'
-            keyAlias 'key0'
+            storeFile file('C:\\Programming\\MJkey.jks')
+            keyPassword 'hjdh9xvrQ51@t123'
+            storePassword 'hjdh9xvrQ51@t123'
+            keyAlias 'MJkey'
         }
-        'new' {
-            storeFile file('C:\\AndroidApps\\key.jks')
-            keyPassword 'qwerty123'
-            keyAlias 'key0'
-            storePassword 'qwerty123'
+        release {
+            storeFile file('C:\\Programming\\MJkey.jks')
+            keyAlias 'MJkey'
+            storePassword 'hjdh9xvrQ51@t123'
+            keyPassword 'hjdh9xvrQ51@t123'
         }
     }
     compileSdk 32

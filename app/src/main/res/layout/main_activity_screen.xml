@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/light_theme_background"
     tools:context=".MainActivity"
     tools:ignore="HardcodedText,UnusedAttribute,UsingOnClickInXml">
 
@@ -12,7 +12,7 @@
         android:id="@+id/profileEditButton"
         android:layout_width="80dp"
         android:layout_height="48dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="100dp"
         android:background="@drawable/ripple_effect"
         android:fontFamily="@font/quicksand_bold"
@@ -30,84 +30,108 @@
 
     <Button
         android:id="@+id/addBottle"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/ripple_effect"
         android:fontFamily="@font/quicksand_bold"
         android:foreground="@drawable/button_foreground"
-        android:text="add bottle"
+        android:text="add"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:backgroundTint="@color/button_blue_gray_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
+        app:layout_constraintTop_toBottomOf="@+id/waterUserInput"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/addBottleToast"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginStart="60dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="10dp"
         android:background="@drawable/ripple_effect_toast"
         android:clickable="false"
         android:fontFamily="@font/quicksand_bold"
         android:foreground="@drawable/button_foreground_toast"
-        android:text="add bottle"
+        android:text="add"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:backgroundTint="@color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
+        app:layout_constraintTop_toBottomOf="@+id/waterUserInput"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/removeBottle"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="80dp"
         android:background="@drawable/ripple_effect"
         android:fontFamily="@font/quicksand_bold"
         android:foreground="@drawable/button_foreground"
-        android:text="remove bottle"
+        android:text="remove"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:backgroundTint="@color/button_blue_gray_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
+        app:layout_constraintTop_toBottomOf="@+id/waterUserInput"
         app:layout_constraintVertical_bias="0.0" />
+
+
+    <!--suppress AndroidDomInspection -->
+
+    <Button
+        android:id="@+id/waterConsumptionTip"
+        android:layout_width="80dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="100dp"
+        android:background="@drawable/ripple_effect"
+        android:fontFamily="@font/quicksand_bold"
+        android:foreground="@drawable/button_foreground"
+        android:text="help"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:backgroundTint="@color/button_blue_gray_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileEditButton"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="SmallSp" />
 
     <Button
         android:id="@+id/removeBottleToast"
-        android:layout_width="120dp"
+        android:layout_width="100dp"
         android:layout_height="60dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="80dp"
         android:background="@drawable/ripple_effect_toast"
         android:clickable="false"
         android:fontFamily="@font/quicksand_bold"
         android:foreground="@drawable/button_foreground_toast"
-        android:text="remove bottle"
+        android:text="remove"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:backgroundTint="@color/transparent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
+        app:layout_constraintTop_toBottomOf="@+id/waterUserInput"
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
@@ -128,7 +152,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.724" />
+        app:layout_constraintVertical_bias="0.749" />
 
     <Button
         android:id="@+id/showProfileButtonToast"
@@ -148,7 +172,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.724" />
+        app:layout_constraintVertical_bias="0.749" />
 
     <TextView
         android:id="@+id/welcomeText"
@@ -160,6 +184,7 @@
         android:layout_marginBottom="16dp"
         android:fontFamily="@font/quicksand_bold"
         android:gravity="center"
+        android:paddingHorizontal="4sp"
         android:text="welcomeText"
         android:textColor="@color/black"
         android:textSize="24sp"
@@ -174,9 +199,10 @@
         android:id="@+id/profileSetupText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="47dp"
+        android:layout_marginTop="37dp"
         android:layout_marginEnd="10dp"
         android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
         android:text="profileSetupText"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -188,11 +214,30 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
+        android:id="@+id/helpText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:layout_marginEnd="10dp"
+        android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
+        android:text="helpText"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/profileEditButton"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/profileSetupText"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
         android:id="@+id/showProfileText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
         android:text="showProfileText"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -201,26 +246,26 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.712" />
+        app:layout_constraintVertical_bias="0.736" />
 
     <TextView
         android:id="@+id/daysToChangeFilter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
         android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
-        android:foreground="@drawable/text_view_foreground"
-        android:paddingHorizontal="8sp"
-        android:paddingVertical="2sp"
+        android:gravity="center"
+        android:paddingHorizontal="4sp"
         android:text="daysToChangeFilter"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.281" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/showInMainDailyWaterConsumption"
@@ -229,9 +274,8 @@
         android:layout_marginTop="15dp"
         android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
-        android:foreground="@drawable/text_view_foreground"
-        android:paddingHorizontal="8sp"
-        android:paddingVertical="2sp"
+        android:gravity="center"
+        android:paddingHorizontal="4sp"
         android:text="showInMainDailyWaterConsumption"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -248,9 +292,8 @@
         android:layout_marginTop="20dp"
         android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
-        android:foreground="@drawable/text_view_foreground"
-        android:paddingHorizontal="8sp"
-        android:paddingVertical="2sp"
+        android:gravity="center"
+        android:paddingHorizontal="4sp"
         android:text="showInMainWaterDrunk"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
@@ -259,5 +302,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showInMainDailyWaterConsumption"
         app:layout_constraintVertical_bias="0.0" />
+
+    <EditText
+        android:id="@+id/waterUserInput"
+        android:layout_width="160dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/edit_text_border"
+        android:ems="10"
+        android:fontFamily="@font/quicksand_bold"
+        android:gravity="center"
+        android:hint="Amount to:"
+        android:importantForAutofill="no"
+        android:inputType="textPersonName"
+        android:text=""
+        android:textColorHint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/showInMainWaterDrunk"
+        app:layout_constraintVertical_bias="0.0"
+        tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
