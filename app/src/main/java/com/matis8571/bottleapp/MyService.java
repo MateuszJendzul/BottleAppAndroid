@@ -47,7 +47,7 @@ public class MyService extends Service {
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
         int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
-        SharedPreferences myServicePrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences myServicePrefs = getSharedPreferences("myServicePrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor myServicePrefsEditor = myServicePrefs.edit();
         xCh1 = myServicePrefsReceiver.getInt("xCh1", 3);
         xCh2 = myServicePrefsReceiver.getInt("xCh1", 12);
