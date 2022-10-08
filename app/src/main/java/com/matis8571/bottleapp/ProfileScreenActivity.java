@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -62,7 +61,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
 
-        double filterEfficiencyCountingProjection = (filterEfficiency - (double)filterEfficiencyCounting / 1000);
+        double filterEfficiencyCountingProjection = (filterEfficiency - (double) filterEfficiencyCounting / 1000);
 
         savedYear = filterPrefsReceiver.getInt("savedYear", 0);
         savedMonth = Integer.parseInt(filterMonth);
