@@ -28,8 +28,9 @@
             android:name=".WaterConsumptionTip"
             android:theme="@style/AppTheme.TranslucentBorders" />
 
-        <service android:name=".Notifications" />
-        <service android:name=".MyService" />
+        <service
+            android:name=".MyService"
+            android:label="MyService" />
 
     </application>
 

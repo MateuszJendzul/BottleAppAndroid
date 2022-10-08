@@ -21,8 +21,8 @@ public class MainActivity extends AppCompatActivity {
     Button profileEditButton, showProfileButton, addWaterButton, removeWaterButton, showProfileButtonToast,
             removeWaterButtonToast, addWaterButtonToast, waterConsumptionTipButton;
     EditText waterUserInputEdit;
-    DateAndTime dateAndTime = new DateAndTime();
-//TODO try to make onr variable for both, bottles and userInput
+    MyService myService = new MyService();
+
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         howMuchToDrink();
         countToFilterEfficiency();
         countDaysToFilterChange();
-        startMyService();
         userChangeAfterDaysFilterReset();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -49,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         int waterTodayMain = mainPrefsReceiver.getInt("waterToday", 0);
 
         if (unlockNotifications) {
-            startNotifications();
+            startMyService();
         }
 
         //make new button/text object using previously setup id
@@ -206,14 +205,14 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         int x = mainPrefsReceiver.getInt("x", 0);
 
-        if (x != dateAndTime.getDay()) {
+        if (x != myService.getDay()) {
             addToDaysCounter();
             mainPrefsReceiver.edit().remove("bottlesDone").apply();
             mainPrefsReceiver.edit().remove("bottlesDoneExtend").apply();
             mainPrefsReceiver.edit().remove("waterToday").apply();
             mainPrefsReceiver.edit().remove("countingWaterUserInput").apply();
             int howMuchToDrink = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
-            x = dateAndTime.getDay();
+            x = myService.getDay();
             mainPrefsEditor.putInt("x", x).apply();
             mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();
         }
@@ -403,12 +402,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startMyService() {
-        Intent myServiceIntent = new Intent(MainActivity.this, MyService.class);
-        startService(myServiceIntent);
-    }
-
-    private void startNotifications() {
-        Intent notificationsIntent = new Intent(MainActivity.this, Notifications.class);
-        startService(notificationsIntent);
+        startService(new Intent(this, MyService.class));
     }
 }
