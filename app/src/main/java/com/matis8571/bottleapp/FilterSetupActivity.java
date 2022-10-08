@@ -21,7 +21,7 @@ public class FilterSetupActivity extends AppCompatActivity {
     EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit, dailyWaterConsumptionEdit;
     Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton,
             autoSetDailyWaterButton;
-    DateAndTime dateAndTime = new DateAndTime();
+    MyService myService = new MyService();
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -56,7 +56,7 @@ public class FilterSetupActivity extends AppCompatActivity {
             String filterMonth = filterStartMonthEdit.getText().toString();
             int dailyWaterConsumption = Integer.parseInt(dailyWaterConsumptionEdit.getText().toString());
             int userChangeAfterDays = Integer.parseInt(filterDaysToChangeEdit.getText().toString());
-            int savedYear = dateAndTime.getYear();
+            int savedYear = myService.getYear();
 
             SharedPreferences filterPrefs = getSharedPreferences("filterPrefs", Context.MODE_PRIVATE);
             SharedPreferences.Editor filterPrefsEditor = filterPrefs.edit();
