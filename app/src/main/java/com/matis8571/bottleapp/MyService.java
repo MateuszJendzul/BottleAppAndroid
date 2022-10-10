@@ -22,7 +22,7 @@ public class MyService extends Service {
     public static final String CHANNEL_1_ID = "channel1";
     public static final String CHANNEL_2_ID = "channel2";
     public static final String CHANNEL_3_ID = "channel3";
-    private int xCh1, xCh2, xCh3, day, month, year, timeSecond, timeMinute, timeHour;
+    private int xChannel1, xChannel3, day, month, year, timeSecond, timeMinute, timeHour;
     private NotificationManagerCompat notificationManager;
     private final Handler handler = new Handler();
 
@@ -49,9 +49,9 @@ public class MyService extends Service {
         int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
         SharedPreferences myServicePrefs = getSharedPreferences("myServicePrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor myServicePrefsEditor = myServicePrefs.edit();
-        xCh1 = myServicePrefsReceiver.getInt("xCh1", 3);
-        xCh2 = myServicePrefsReceiver.getInt("xCh1", 12);
-        xCh3 = myServicePrefsReceiver.getInt("xCh3", 10);
+        myServicePrefsEditor.putInt("howMuchToFilterLeft", howMuchToFilterLeft).apply();
+        xChannel1 = myServicePrefsReceiver.getInt("xChannel1", 3);
+        xChannel3 = myServicePrefsReceiver.getInt("xChannel3", 10);
 
         if (enableShowProfileButton) {
             // Refresh containing code every value (seconds) defined by delay variable
@@ -67,34 +67,37 @@ public class MyService extends Service {
                     timeSecond = calendar.get(Calendar.SECOND);
 
                     // Send notifications for the last 3 days of filter usage user set date
-                    if (xCh1 == daysToFilterChangeCounting && timeHour == 16) {
+                    if (xChannel1 == daysToFilterChangeCounting && timeHour == 18) {
                         notificationCh1DaysLeft();
-                        xCh1--;
-                        myServicePrefsEditor.putInt("xCh1", xCh1).apply();
+                        xChannel1--;
+                        myServicePrefsEditor.putInt("xChannel1", xChannel1).apply();
                     }
                     // Every hour check if user consumed settled amount of water, if not, send notification
-                    if (howMuchToDrink > 0 && xCh2 == timeHour) {
-                        notificationCh2DrinkReminder();
-                        xCh2++;
-                        myServicePrefsEditor.putInt("xCh2", xCh2).apply();
+                    if (howMuchToDrink > 0) {
+                        if(timeMinute == 0 && (timeSecond == 0 || timeSecond == 1 ||
+                                timeSecond == 2 || timeSecond == 3 || timeSecond == 4 )) {
+                            switch (timeHour) {
+                                case 10:
+                                case 12:
+                                case 14:
+                                case 16:
+                                case 18:
+                                    notificationCh2DrinkReminder();
+                                    break;
+                            }
+                        }
                     }
                     // Check if filter still can filter some water based on it efficiency, send notifications
                     //  if filter have less than 10l of its efficiency until expiration.
-                    if (xCh3 == howMuchToFilterLeft && timeHour == 16) {
+                    if (xChannel3 == howMuchToFilterLeft) {
                         notificationCh3FilterEfficiencyWater();
-                        xCh3 = xCh3 - 2;
-                        myServicePrefsEditor.putInt("xCh3", xCh3).apply();
+                        xChannel3 = xChannel3 - 2;
+                        myServicePrefsEditor.putInt("xChannel3", xChannel3).apply();
                     }
                     handler.postDelayed(this, delay);
                 }
             }, delay);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.d(TAG, "onDestroy: Destroy");
-        super.onDestroy();
     }
 
     @Override

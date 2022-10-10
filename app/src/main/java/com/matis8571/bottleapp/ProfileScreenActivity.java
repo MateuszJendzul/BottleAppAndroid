@@ -98,7 +98,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         }
 
         showToMainButton.setOnClickListener(view -> {
-            Log.d(TAG, "onClick: Clicked: setupToMainButton");
+            Log.d(TAG, "onClick: setupToMainButton");
             Intent showToMainButtonIntent = new Intent(ProfileScreenActivity.this, MainActivity.class);
             startActivity(showToMainButtonIntent);
         });
