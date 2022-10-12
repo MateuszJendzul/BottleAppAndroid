@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -18,11 +19,11 @@ import java.util.Calendar;
 
 public class MyService extends Service {
     private static final String TAG = "MyService";
-    private final int delay = 5000;
+    private final int delay = 1000;
     public static final String CHANNEL_1_ID = "channel1";
     public static final String CHANNEL_2_ID = "channel2";
     public static final String CHANNEL_3_ID = "channel3";
-    private int xChannel1, xChannel3, day, month, year, timeSecond, timeMinute, timeHour;
+    private int xChannel1, xChannel2, xChannel3, day, month, year, timeSecond, timeMinute, timeHour;
     private NotificationManagerCompat notificationManager;
     private final Handler handler = new Handler();
 
@@ -73,18 +74,9 @@ public class MyService extends Service {
                         myServicePrefsEditor.putInt("xChannel1", xChannel1).apply();
                     }
                     // Every hour check if user consumed settled amount of water, if not, send notification
-                    if (howMuchToDrink > 0) {
-                        if(timeMinute == 0 && (timeSecond == 0 || timeSecond == 1 ||
-                                timeSecond == 2 || timeSecond == 3 || timeSecond == 4 )) {
-                            switch (timeHour) {
-                                case 10:
-                                case 12:
-                                case 14:
-                                case 16:
-                                case 18:
-                                    notificationCh2DrinkReminder();
-                                    break;
-                            }
+                    if (timeMinute == 1 && timeSecond == 1 && timeHour <= 18 || timeHour >= 8) {
+                        if (howMuchToDrink > 0) {
+                            notificationCh2DrinkReminder();
                         }
                     }
                     // Check if filter still can filter some water based on it efficiency, send notifications
