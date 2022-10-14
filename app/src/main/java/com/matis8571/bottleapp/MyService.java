@@ -1,13 +1,14 @@
 package com.matis8571.bottleapp;
 
+import static com.matis8571.bottleapp.Notifications.CHANNEL_1_ID;
+import static com.matis8571.bottleapp.Notifications.CHANNEL_2_ID;
+import static com.matis8571.bottleapp.Notifications.CHANNEL_3_ID;
+
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -15,23 +16,15 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
-import java.util.Calendar;
-
 public class MyService extends Service {
     private static final String TAG = "MyService";
-    private final int delay = 1000;
-    public static final String CHANNEL_1_ID = "channel1";
-    public static final String CHANNEL_2_ID = "channel2";
-    public static final String CHANNEL_3_ID = "channel3";
-    private int xChannel1, xChannel2, xChannel3, day, month, year, timeSecond, timeMinute, timeHour;
     private NotificationManagerCompat notificationManager;
-    private final Handler handler = new Handler();
+    private int xCh2, xCh1, xCh3;
+    DateAndTime dateAndTime = new DateAndTime();
 
     @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(TAG, "onCreate: Starting");
-        createNotificationChannels();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand: Starting");
         notificationManager = NotificationManagerCompat.from(this);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
@@ -39,138 +32,40 @@ public class MyService extends Service {
                 "userProfilePrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
-        SharedPreferences myServicePrefsReceiver = getApplicationContext().getSharedPreferences(
-                "myServicePrefs", Context.MODE_PRIVATE);
-
         boolean enableShowProfileButton = filterPrefsReceiver.getBoolean("enableShowProfileButton", false);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
         int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
-        SharedPreferences myServicePrefs = getSharedPreferences("myServicePrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor myServicePrefsEditor = myServicePrefs.edit();
-        myServicePrefsEditor.putInt("howMuchToFilterLeft", howMuchToFilterLeft).apply();
-        xChannel1 = myServicePrefsReceiver.getInt("xChannel1", 3);
-        xChannel3 = myServicePrefsReceiver.getInt("xChannel3", 10);
 
         if (enableShowProfileButton) {
-            // Refresh containing code every value (seconds) defined by delay variable
-            handler.postDelayed(new Runnable() {
-                public void run() { //code to run below
-                    // Get current date and time
-                    Calendar calendar = Calendar.getInstance();
-                    day = calendar.get(Calendar.DAY_OF_MONTH);
-                    month = calendar.get(Calendar.MONTH) + 1;
-                    year = calendar.get(Calendar.YEAR);
-                    timeHour = calendar.get(Calendar.HOUR_OF_DAY);
-                    timeMinute = calendar.get(Calendar.MINUTE);
-                    timeSecond = calendar.get(Calendar.SECOND);
-
-                    // Send notifications for the last 3 days of filter usage user set date
-                    if (xChannel1 == daysToFilterChangeCounting && timeHour == 18) {
-                        notificationCh1DaysLeft();
-                        xChannel1--;
-                        myServicePrefsEditor.putInt("xChannel1", xChannel1).apply();
-                    }
-                    // Every hour check if user consumed settled amount of water, if not, send notification
-                    if (timeMinute == 1 && timeSecond == 1 && timeHour <= 18 || timeHour >= 8) {
-                        if (howMuchToDrink > 0) {
-                            notificationCh2DrinkReminder();
-                        }
-                    }
-                    // Check if filter still can filter some water based on it efficiency, send notifications
-                    //  if filter have less than 10l of its efficiency until expiration.
-                    if (xChannel3 == howMuchToFilterLeft) {
-                        notificationCh3FilterEfficiencyWater();
-                        xChannel3 = xChannel3 - 2;
-                        myServicePrefsEditor.putInt("xChannel3", xChannel3).apply();
-                    }
-                    handler.postDelayed(this, delay);
+            // Send notifications for the last 3 days of filter usage user set date
+            if (daysToFilterChangeCounting <= 3 && dateAndTime.getDay() != xCh1) {
+                notificationCh1DaysLeft();
+                xCh1 = dateAndTime.getDay();
+            }
+            // Every hour check if user consumed settled amount of water, if not, send notification
+            else if (howMuchToDrink > 0) {
+                if (dateAndTime.getTimeHour() != xCh2 && dateAndTime.getTimeMinute() == 0
+                        && dateAndTime.getTimeSeconds() == 0) {
+                    notificationCh2DrinkReminder();
+                    xCh2 = dateAndTime.getTimeHour();
                 }
-            }, delay);
+            }
+            // Check if filter still can filter some water based on it efficiency, send notifications
+            //  if filter have less than 10l of its efficiency until expiration.
+            else if (howMuchToFilterLeft <= 10 && dateAndTime.getTimeHour() != xCh3) {
+                notificationCh3FilterEfficiencyWater();
+                xCh3 = dateAndTime.getTimeHour();
+            }
         }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public int getTimeMinute() {
-        return timeMinute;
-    }
-
-    public int getTimeHour() {
-        return timeHour;
-    }
-
-    public int getTimeSeconds() {
-        return timeSecond;
-    }
-
-    /**
-     * Return actual time of the day using java.util.Calendar.
-     */
-    public String getTime() {
-        if (timeMinute < 10) {
-            return timeHour + ":0" + timeMinute;
-        } else {
-            return timeHour + ":" + timeMinute;
-        }
-    }
-
-    /**
-     * Return actual date using java.util.Calendar.
-     * If number representing month is one digital, adds 0 to make it two-digit.
-     */
-    public String getDate() {
-        if (getMonth() < 9) {
-            return getDay() + ".0" + getMonth() + "." + getYear();
-        } else {
-            return getDay() + "." + getMonth() + "." + getYear();
-        }
-    }
-
-    /**
-     * Change to new variable at 23:59.
-     *
-     * @param toReset target value to reset
-     * @param resetTo set new value after reset
-     * @return returns new value
-     */
-    @SuppressWarnings({"ParameterCanBeLocal", "UnusedAssignment"})
-    public int dailyReset(int toReset, int resetTo) {
-        if (timeHour == 23 && timeMinute == 59) {
-            toReset = resetTo;
-        }
-        return resetTo;
-    }
-
-    /**
-     * At 23:59 return target boolean as false, otherwise return true.
-     *
-     * @param toReset target boolean to change
-     * @return returns false at 23:59
-     */
-    public boolean dailyReset(boolean toReset) {
-        if (timeHour == 23 && timeMinute == 59) {
-            return !toReset;
-        } else {
-            return toReset;
-        }
     }
 
     /**
@@ -210,7 +105,7 @@ public class MyService extends Service {
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
         notificationManager.notify(2, notification);
@@ -254,46 +149,5 @@ public class MyService extends Service {
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                 .build();
         notificationManager.notify(3, notification);
-    }
-
-    /**
-     * Use to create new channels for notifications.
-     * Checks if current android version allows creation of notification channels
-     * (not available under Oreo android version), then sets channel: id, name, and notification
-     * importance settings along with description, and lastly creates channels with set properties.
-     */
-    private void createNotificationChannels() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel1 = new NotificationChannel(
-                    CHANNEL_1_ID,
-                    "Days to filter change",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel1.setDescription("Send notifications for the last 3 days of filter usage user set date");
-
-            NotificationChannel channel2 = new NotificationChannel(
-                    CHANNEL_2_ID,
-                    "Daily water drink",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel2.setDescription("Every hour check if user consumed settled amount of water " +
-                    "if not, send notification");
-
-            NotificationChannel channel3 = new NotificationChannel(
-                    CHANNEL_3_ID,
-                    "Remaining filter efficiency",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
-            channel3.setDescription("Send notifications if filter have less than 10l of its efficiency " +
-                    "until expiration");
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel1);
-            notificationManager.createNotificationChannel(channel2);
-            notificationManager.createNotificationChannel(channel3);
-        }
     }
 }
