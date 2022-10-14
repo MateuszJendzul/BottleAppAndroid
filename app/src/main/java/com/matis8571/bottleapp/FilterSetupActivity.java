@@ -21,7 +21,7 @@ public class FilterSetupActivity extends AppCompatActivity {
     EditText filterStartDayEdit, filterStartMonthEdit, filterDaysToChangeEdit, dailyWaterConsumptionEdit;
     Button filterSetupBackButton, submitFilterButton, submitFilterButtonToast, filterSetupToMainButton,
             autoSetDailyWaterButton;
-    MyService myService = new MyService();
+    DateAndTime dateAndTime = new DateAndTime();
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -43,8 +43,8 @@ public class FilterSetupActivity extends AppCompatActivity {
         filterStartDayEdit = findViewById(R.id.filterStartDayInput);
         filterStartMonthEdit = findViewById(R.id.filterStartMonthInput);
         filterDaysToChangeEdit = findViewById(R.id.filterDaysToChangeInput);
-        userSetDailyWaterUsageText.setText("Water to drink daily:");
-        autoSetDailyWaterMessageText.setText("Hint:");
+        userSetDailyWaterUsageText.setText("Set your daily water:");
+        autoSetDailyWaterMessageText.setText("Tap to count water demand:");
         userSetDaysToChangeText.setText("Filter change after:");
         filterDateSetupText.setText("Filter start date:");
 
@@ -56,7 +56,7 @@ public class FilterSetupActivity extends AppCompatActivity {
             String filterMonth = filterStartMonthEdit.getText().toString();
             int dailyWaterConsumption = Integer.parseInt(dailyWaterConsumptionEdit.getText().toString());
             int userChangeAfterDays = Integer.parseInt(filterDaysToChangeEdit.getText().toString());
-            int savedYear = myService.getYear();
+            int savedYear = dateAndTime.getYear();
 
             SharedPreferences filterPrefs = getSharedPreferences("filterPrefs", Context.MODE_PRIVATE);
             SharedPreferences.Editor filterPrefsEditor = filterPrefs.edit();
@@ -120,7 +120,7 @@ public class FilterSetupActivity extends AppCompatActivity {
             SharedPreferences userProfilePrefsReceiver = getSharedPreferences("userProfilePrefs", Context.MODE_PRIVATE);
             int userWeight = userProfilePrefsReceiver.getInt("userWeight", 0);
             int autoDailyWaterConsumption = (userWeight * 30) + 250;
-            Toast.makeText(FilterSetupActivity.this, "To drink daily: " + autoDailyWaterConsumption, Toast.LENGTH_SHORT).show();
+            Toast.makeText(FilterSetupActivity.this, "Set to: " + autoDailyWaterConsumption, Toast.LENGTH_SHORT).show();
         });
     }
 }

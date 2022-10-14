@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,7 +34,7 @@ public class ProfileSetupScreenActivity extends AppCompatActivity {
         setupToMainButton = findViewById(R.id.setupToMainButton);
         submitButton = findViewById(R.id.submitChangesButton);
         setupMessageText = findViewById(R.id.profileMessage);
-        nameEdit = findViewById(R.id.amountToDrink);
+        nameEdit = findViewById(R.id.setupProfileName);
         weightEdit = findViewById(R.id.setupWeight);
         filterEfficiencyEdit = findViewById(R.id.setupFilterEfficiency);
         bottleCapacityEdit = findViewById(R.id.setupBottleCapacity);

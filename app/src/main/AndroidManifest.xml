@@ -24,13 +24,9 @@
         <activity android:name=".ProfileSetupScreenActivity" />
         <activity android:name=".ProfileScreenActivity" />
         <activity android:name=".FilterSetupActivity" />
-        <activity
-            android:name=".WaterConsumptionTip"
-            android:theme="@style/AppTheme.TranslucentBorders" />
 
-        <service
-            android:name=".MyService"
-            android:label="MyService" />
+        <service android:name=".Notifications" />
+        <service android:name=".MyService" />
 
     </application>
 
