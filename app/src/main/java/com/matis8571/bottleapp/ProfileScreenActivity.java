@@ -8,24 +8,27 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.Calendar;
 
 public class ProfileScreenActivity extends AppCompatActivity {
     private final String TAG = "ProfileScreen";
 
     TextView weightText, bottleCapacityText, filterEfficiencyText, profileNameText,
             profileMessageText, daysCounterText, filterStartDateText, changeAfterDaysText,
-            dailyWaterConsumptionText, waterTodayText, countDaysToFilterChangeText, daysToFilterChangeText;
+            dailyWaterConsumptionText, waterTodayText, countDaysToFilterChangeText, countLitersToFilterChangeText;
     Button showToMainButton;
-    private int savedDay, savedMonth, savedYear;
+    Calendar calendar = Calendar.getInstance();
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.profile_screen);
         Log.d(TAG, "onCreate: Starting");
+        setContentView(R.layout.profile_screen);
 
         showToMainButton = findViewById(R.id.showToMainButton);
         dailyWaterConsumptionText = findViewById(R.id.dailyWaterConsumption);
@@ -39,7 +42,7 @@ public class ProfileScreenActivity extends AppCompatActivity {
         filterStartDateText = findViewById(R.id.filterStartDate);
         waterTodayText = findViewById(R.id.waterToday);
         countDaysToFilterChangeText = findViewById(R.id.countDaysToFilterChange);
-        daysToFilterChangeText = findViewById(R.id.daysToFilterChange);
+        countLitersToFilterChangeText = findViewById(R.id.countLitersToFilterChange);
 
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
@@ -47,25 +50,25 @@ public class ProfileScreenActivity extends AppCompatActivity {
                 "filterPrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences myServicePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "myServicePrefs", Context.MODE_PRIVATE);
 
         String profileName = userProfilePrefsReceiver.getString("profileName", null);
         int userWeight = userProfilePrefsReceiver.getInt("userWeight", 0);
         int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
-        String filterDay = filterPrefsReceiver.getString("filterDay", null);
-        String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
         int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumption", 0);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
         int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
-
         double filterEfficiencyCountingProjection = (filterEfficiency - (double) filterEfficiencyCounting / 1000);
 
-        savedYear = filterPrefsReceiver.getInt("savedYear", 0);
-        savedMonth = Integer.parseInt(filterMonth);
-        savedDay = Integer.parseInt(filterDay);
+        String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
+        int savedMonth = Integer.parseInt(filterMonth);
+        String filterDay = filterPrefsReceiver.getString("filterDay", null);
+        int savedDay = Integer.parseInt(filterDay);
 
         SharedPreferences profilePrefs = getSharedPreferences("profilePrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor profilePrefsEditor = profilePrefs.edit();
@@ -80,8 +83,8 @@ public class ProfileScreenActivity extends AppCompatActivity {
         filterStartDateText.setText("Filter start: " + filterStartDateString());
         profileMessageText.setText("Profile:");
         waterTodayText.setText("Water today: " + waterToday);
-        countDaysToFilterChangeText.setText("To filter change: " + daysToFilterChangeCounting + " days");
-        daysToFilterChangeText.setText("To filter change: " + filterEfficiencyCountingProjection + "l");
+        countDaysToFilterChangeText.setText("Days to filter change: " + daysToFilterChangeCounting);
+        countLitersToFilterChangeText.setText("Liters to filter change: " + filterEfficiencyCountingProjection);
 
         if (daysCounter > userChangeAfterDays) {
             daysCounterText.setText("Change filter!\nLast change: " + daysCounter + " days ago.");
@@ -108,10 +111,37 @@ public class ProfileScreenActivity extends AppCompatActivity {
      * Displays date in dd/mm/yyyy format using previously saved user input in FilterSetup.java
      */
     private String filterStartDateString() {
+        Log.d(TAG, "onCall: filterStartDateString");
+        SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "filterPrefs", Context.MODE_PRIVATE);
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
+
+        //If x isn't equal to current year then: save current year and send it to ProfileScreenActivity,
+        // then change x to equal as current year
+        int x = userProfilePrefsReceiver.getInt("x", 0);
+        if (x != getYear()) {
+            int savedYear = getYear();
+            SharedPreferences userProfilePrefs = getSharedPreferences("userProfilePrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor userProfilePrefsEditor = userProfilePrefs.edit();
+            userProfilePrefsEditor.putInt("savedYear", savedYear).apply();
+            userProfilePrefsEditor.putInt("x", getYear());
+        }
+
+        int savedYear = userProfilePrefsReceiver.getInt("savedYear", 0);
+        String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
+        int savedMonth = Integer.parseInt(filterMonth);
+        String filterDay = filterPrefsReceiver.getString("filterDay", null);
+        int savedDay = Integer.parseInt(filterDay);
+
         if (savedMonth < 10) {
             return savedDay + "." + "0" + savedMonth + "." + savedYear;
         } else {
             return savedDay + "." + savedMonth + "." + savedYear;
         }
+    }
+
+    private int getYear() {
+        return calendar.get(Calendar.YEAR);
     }
 }

@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
@@ -21,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     Button profileEditButton, showProfileButton, addWaterButton, removeWaterButton, showProfileButtonToast,
             removeWaterButtonToast, addWaterButtonToast, waterConsumptionTipButton;
     EditText waterUserInputEdit;
-    MyService myService = new MyService();
+    Calendar currentDateCalendar = Calendar.getInstance();
 
     @SuppressLint("SetTextI18n")
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
         countToFilterEfficiency();
         countDaysToFilterChange();
         userChangeAfterDaysFilterReset();
+        reminderNotificationChannel1();
+        reminderNotificationChannel2();
+        reminderNotificationChannel3();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
@@ -45,10 +50,6 @@ public class MainActivity extends AppCompatActivity {
         int dailyWaterConsumptionOnlyRead = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
         int howMuchToDrinkMain = mainPrefsReceiver.getInt("howMuchToDrink", 0);
         int waterTodayMain = mainPrefsReceiver.getInt("waterToday", 0);
-
-        if (unlockNotifications) {
-            startMyService();
-        }
 
         //Make new button/text object using previously setup id
         profileEditButton = findViewById(R.id.profileEditButton);
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         waterConsumptionTipButton.setOnClickListener(view -> {
+            Log.d(TAG, "onClick: waterConsumptionTipButton");
             Intent waterConsumptionTipButtonIntent = new Intent(
                     MainActivity.this, WaterConsumptionTip.class);
             startActivity(waterConsumptionTipButtonIntent);
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
           application display.
          */
         addWaterButton.setOnClickListener(v -> {
+            Log.d(TAG, "onClick: addWaterButton");
             addBottlesDone();
             howMuchToDrink();
             int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
@@ -158,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
          updates Texts.
          */
         removeWaterButton.setOnClickListener(view -> {
+            Log.d(TAG, "onClick: removeWaterButton");
             removeBottlesDone();
             howMuchToDrink();
             int waterToday = mainPrefsReceiver.getInt("waterToday", 0);
@@ -172,14 +176,135 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Use to add notifications on channel1 created in MyService.class. Add only once a day
+     * (to prevent adding again same notifications every time user re opens app).
+     * Send notification for the last 3 days of filter efficiency which was set by user.
+     */
+    private void reminderNotificationChannel1() {
+        Log.d(TAG, "onCall: reminderNotificationChannel1");
+        MyService myService = new MyService(this);
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int xChannel1 = mainPrefsReceiver.getInt("xChannel1", 3);
+        int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
+
+        // Send notifications for the last 3 days of filter usage user set date
+        if (xChannel1 == daysToFilterChangeCounting) {
+            Calendar alarmAt19Ch1 = Calendar.getInstance();
+            alarmAt19Ch1.setTimeInMillis(System.currentTimeMillis());
+            alarmAt19Ch1.set(Calendar.HOUR_OF_DAY, 19);
+            alarmAt19Ch1.set(Calendar.MINUTE, 0);
+            alarmAt19Ch1.set(Calendar.SECOND, 1);
+            myService.setReminder(alarmAt19Ch1, currentDateCalendar);
+
+            xChannel1--;
+            mainPrefsEditor.putInt("xChannel1", xChannel1).apply();
+        }
+    }
+
+    /**
+     * Use to add notifications on channel2 created in MyService.class. Add only once a day
+     * (to prevent adding again same notifications every time user re opens app).
+     * Every 2 hours (10-18) check if user consumed settled amount of water, if not, set to notify.
+     */
+    private void reminderNotificationChannel2() {
+        Log.d(TAG, "onCall: reminderNotificationChannel2");
+        MyService myService = new MyService(this);
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+
+        int savedDay = mainPrefsReceiver.getInt("savedDay", 0);
+        if (savedDay != getDay()) {
+            SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+            SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+            mainPrefsEditor.putInt("savedDay", getDay()).apply();
+            mainPrefsEditor.putBoolean("addedToday", true).apply();
+        }
+        int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
+        boolean addedToday = mainPrefsReceiver.getBoolean("addedToday", false);
+
+        if (howMuchToDrink > 0 && addedToday) {
+            //Setup new calendar time to later build notification using it
+            Calendar alarmAt10Ch2 = Calendar.getInstance();
+            alarmAt10Ch2.setTimeInMillis(System.currentTimeMillis());
+            alarmAt10Ch2.set(Calendar.HOUR_OF_DAY, 10);
+            alarmAt10Ch2.set(Calendar.MINUTE, 0);
+            alarmAt10Ch2.set(Calendar.SECOND, 1);
+            //Call method to create notification using specified calendar time
+            myService.setReminder(alarmAt10Ch2, currentDateCalendar);
+
+            Calendar alarmAt12Ch2 = Calendar.getInstance();
+            alarmAt12Ch2.setTimeInMillis(System.currentTimeMillis());
+            alarmAt12Ch2.set(Calendar.HOUR_OF_DAY, 12);
+            alarmAt12Ch2.set(Calendar.MINUTE, 0);
+            alarmAt12Ch2.set(Calendar.SECOND, 1);
+            myService.setReminder(alarmAt12Ch2, currentDateCalendar);
+
+            Calendar alarmAt14Ch2 = Calendar.getInstance();
+            alarmAt14Ch2.setTimeInMillis(System.currentTimeMillis());
+            alarmAt14Ch2.set(Calendar.HOUR_OF_DAY, 14);
+            alarmAt14Ch2.set(Calendar.MINUTE, 0);
+            alarmAt14Ch2.set(Calendar.SECOND, 1);
+            myService.setReminder(alarmAt14Ch2, currentDateCalendar);
+
+            Calendar alarmAt16Ch2 = Calendar.getInstance();
+            alarmAt16Ch2.setTimeInMillis(System.currentTimeMillis());
+            alarmAt16Ch2.set(Calendar.HOUR_OF_DAY, 16);
+            alarmAt16Ch2.set(Calendar.MINUTE, 0);
+            alarmAt16Ch2.set(Calendar.SECOND, 1);
+            myService.setReminder(alarmAt16Ch2, currentDateCalendar);
+
+            Calendar alarmAt18Ch2 = Calendar.getInstance();
+            alarmAt18Ch2.setTimeInMillis(System.currentTimeMillis());
+            alarmAt18Ch2.set(Calendar.HOUR_OF_DAY, 18);
+            alarmAt18Ch2.set(Calendar.MINUTE, 0);
+            alarmAt18Ch2.set(Calendar.SECOND, 1);
+            myService.setReminder(alarmAt18Ch2, currentDateCalendar);
+        }
+    }
+
+    /**
+     * Use to add notifications on channel3 created in MyService.class. Add only once a day
+     * (to prevent adding again same notifications every time user re opens app).
+     * Check if filter still can filter some water based on it efficiency, which was set by user.
+     * Send notifications if filter can filter only 10l or less.
+     */
+    private void reminderNotificationChannel3() {
+        Log.d(TAG, "onCall: reminderNotificationChannel3");
+        MyService myService = new MyService(this);
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
+                "userProfilePrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
+        int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
+        int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
+
+        if (howMuchToFilterLeft <= 10) {
+            Calendar alarmAt18Ch2 = Calendar.getInstance();
+            alarmAt18Ch2.setTimeInMillis(System.currentTimeMillis());
+            alarmAt18Ch2.set(Calendar.HOUR_OF_DAY, 19);
+            alarmAt18Ch2.set(Calendar.MINUTE, 0);
+            alarmAt18Ch2.set(Calendar.SECOND, 1);
+            myService.setReminder(alarmAt18Ch2, currentDateCalendar);
+        }
+    }
+
+    /**
      * Method used to count how much water is left until filter efficiency hits it's limit.
      */
     private void countToFilterEfficiency() {
+        Log.d(TAG, "onCall: countToFilterEfficiency");
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
-        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
+        int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
+        int bottleCapacity = userProfilePrefsReceiver.getInt("bottleCapacity", 0);
         int bottlesDoneToEfficiency = mainPrefsReceiver.getInt("bottlesDoneToEfficiency", 0);
         int bottlesDoneExtendedToEfficiency = mainPrefsReceiver.getInt("bottlesDoneExtendedToEfficiency", 0);
         int countingWaterUserInputToEfficiency = mainPrefsReceiver.getInt("countingWaterUserInputToEfficiency", 0);
@@ -196,6 +321,7 @@ public class MainActivity extends AppCompatActivity {
      * it for today.
      */
     private void dailyPropertiesReset() {
+        Log.d(TAG, "onCall: dailyPropertiesReset");
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -209,32 +335,32 @@ public class MainActivity extends AppCompatActivity {
         int x = mainPrefsReceiver.getInt("x", 0);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
         int userChangeAfterDays = filterPrefsReceiver.getInt("userChangeAfterDays", 0);
-        int howMuchToFilterLeft = myServicePrefsReceiver.getInt("howMuchToFilterLeft", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
 
         //Reset to default variables responsible for, counting days (adding one to result everyday)
         // and sending notifications about it
-        if (daysCounter == userChangeAfterDays){
+        if (daysCounter == userChangeAfterDays) {
             mainPrefsReceiver.edit().remove("daysCounter").apply();
             myServicePrefsReceiver.edit().remove("xChannel1").apply();
         }
 
         //Reset to default (provided by user when editing profile) properties responsible for
         // counting daily consumed water
-        if (x != myService.getDay()) {
+        if (x != getDay()) {
             addToDaysCounter();
             mainPrefsReceiver.edit().remove("bottlesDone").apply();
             mainPrefsReceiver.edit().remove("bottlesDoneExtend").apply();
             mainPrefsReceiver.edit().remove("waterToday").apply();
             mainPrefsReceiver.edit().remove("countingWaterUserInput").apply();
             int howMuchToDrink = filterPrefsReceiver.getInt("dailyWaterConsumptionOnlyRead", 0);
-            x = myService.getDay();
+            x = getDay();
             mainPrefsEditor.putInt("x", x).apply();
             mainPrefsEditor.putInt("howMuchToDrink", howMuchToDrink).apply();
         }
 
         //Reset properties responsible for counting filter efficiency after reaching target amount
         // and sending notifications about it
+        int howMuchToFilterLeft = mainPrefsReceiver.getInt("howMuchToFilterLeft", 0);
         if (howMuchToFilterLeft == filterEfficiency) {
             mainPrefsReceiver.edit().remove("countingWaterUserInputToEfficiency").apply();
             mainPrefsReceiver.edit().remove("bottlesDoneExtendedToEfficiency").apply();
@@ -248,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
      * If statement if true, reset daysCounter.
      */
     private void userChangeAfterDaysFilterReset() {
+        Log.d(TAG, "onCall: userChangeAfterDaysFilterReset");
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -264,6 +391,7 @@ public class MainActivity extends AppCompatActivity {
      * Method used to count how many days have passed to reach settled by user amount of days to next filter change.
      */
     private void countDaysToFilterChange() {
+        Log.d(TAG, "onCall: countDaysToFilterChange");
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -283,7 +411,9 @@ public class MainActivity extends AppCompatActivity {
      * when howMuchToDrink equals 0 add one to bottlesDoneExtended.
      * Uses SharedPreferences to store and load data in order to save it from activity shutdown wipe.
      */
+
     private void addBottlesDone() {
+        Log.d(TAG, "onCall: addBottlesDone");
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -329,6 +459,7 @@ public class MainActivity extends AppCompatActivity {
      * Uses SharedPreferences to store and load data in order to save it from activity shutdown wipe.
      */
     private void removeBottlesDone() {
+        Log.d(TAG, "onCall: removeBottlesDone");
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
@@ -372,6 +503,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @SuppressLint({"SetTextI18n", "ApplySharedPref"})
     private void howMuchToDrink() {
+        Log.d(TAG, "onCall: howMuchToDrink");
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
@@ -396,6 +528,7 @@ public class MainActivity extends AppCompatActivity {
      * Call to add one to daysCounter.
      */
     private void addToDaysCounter() {
+        Log.d(TAG, "onCall: addToDaysCounter");
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
         int daysCounter = mainPrefsReceiver.getInt("daysCounter", 0);
@@ -405,7 +538,28 @@ public class MainActivity extends AppCompatActivity {
         mainPrefsEditor.putInt("daysCounter", daysCounter).apply();
     }
 
-    private void startMyService() {
-        startService(new Intent(this, MyService.class));
+    private int getTimeHours() {
+        return currentDateCalendar.get(Calendar.HOUR_OF_DAY);
     }
+
+    private int getTimeMinutes() {
+        return currentDateCalendar.get(Calendar.MINUTE);
+    }
+
+    private int getTimeSeconds() {
+        return currentDateCalendar.get(Calendar.SECOND);
+    }
+
+    private int getDay() {
+        return currentDateCalendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    private int getMonth() {
+        return currentDateCalendar.get(Calendar.MONTH) + 1;
+    }
+
+    private int getYear() {
+        return currentDateCalendar.get(Calendar.YEAR);
+    }
+
 }

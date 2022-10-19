@@ -165,14 +165,14 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/daysToFilterChange"
+        android:id="@+id/countLitersToFilterChange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:background="@drawable/text_background"
         android:fontFamily="@font/quicksand_bold"
         android:paddingHorizontal="4sp"
-        android:text="daysToFilterChange"
+        android:text="countLitersToFilterChange"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
