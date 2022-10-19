@@ -8,9 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -18,13 +18,11 @@ import java.util.Calendar;
 
 public class MyService extends Service {
     private static final String TAG = "MyService";
-    private final int delay = 5000;
     public static final String CHANNEL_1_ID = "channel1";
     public static final String CHANNEL_2_ID = "channel2";
     public static final String CHANNEL_3_ID = "channel3";
-    private int xChannel1, xChannel3, day, month, year, timeSecond, timeMinute, timeHour;
+    private int day, month, year, timeSecond, timeMinute, timeHour;
     private NotificationManagerCompat notificationManager;
-    private final Handler handler = new Handler();
 
     @Override
     public void onCreate() {
@@ -50,53 +48,39 @@ public class MyService extends Service {
         SharedPreferences myServicePrefs = getSharedPreferences("myServicePrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor myServicePrefsEditor = myServicePrefs.edit();
         myServicePrefsEditor.putInt("howMuchToFilterLeft", howMuchToFilterLeft).apply();
-        xChannel1 = myServicePrefsReceiver.getInt("xChannel1", 3);
-        xChannel3 = myServicePrefsReceiver.getInt("xChannel3", 10);
+        int savedYear = getYear();
+        myServicePrefsEditor.putInt("savedYear", savedYear);
+        int xChannel1 = myServicePrefsReceiver.getInt("xChannel1", 3);
+        int xChannel3 = myServicePrefsReceiver.getInt("xChannel3", 10);
 
         if (enableShowProfileButton) {
-            // Refresh containing code every value (seconds) defined by delay variable
-            handler.postDelayed(new Runnable() {
-                public void run() { //code to run below
-                    // Get current date and time
-                    Calendar calendar = Calendar.getInstance();
-                    day = calendar.get(Calendar.DAY_OF_MONTH);
-                    month = calendar.get(Calendar.MONTH) + 1;
-                    year = calendar.get(Calendar.YEAR);
-                    timeHour = calendar.get(Calendar.HOUR_OF_DAY);
-                    timeMinute = calendar.get(Calendar.MINUTE);
-                    timeSecond = calendar.get(Calendar.SECOND);
+            // Get current date and time
+            Calendar calendar = Calendar.getInstance();
+            day = calendar.get(Calendar.DAY_OF_MONTH);
+            month = calendar.get(Calendar.MONTH) + 1;
+            year = calendar.get(Calendar.YEAR);
+            timeHour = calendar.get(Calendar.HOUR_OF_DAY);
+            timeMinute = calendar.get(Calendar.MINUTE);
+            timeSecond = calendar.get(Calendar.SECOND);
 
-                    // Send notifications for the last 3 days of filter usage user set date
-                    if (xChannel1 == daysToFilterChangeCounting && timeHour == 18) {
-                        notificationCh1DaysLeft();
-                        xChannel1--;
-                        myServicePrefsEditor.putInt("xChannel1", xChannel1).apply();
-                    }
-                    // Every hour check if user consumed settled amount of water, if not, send notification
-                    if (howMuchToDrink > 0) {
-                        if(timeMinute == 0 && (timeSecond == 0 || timeSecond == 1 ||
-                                timeSecond == 2 || timeSecond == 3 || timeSecond == 4 )) {
-                            switch (timeHour) {
-                                case 10:
-                                case 12:
-                                case 14:
-                                case 16:
-                                case 18:
-                                    notificationCh2DrinkReminder();
-                                    break;
-                            }
-                        }
-                    }
-                    // Check if filter still can filter some water based on it efficiency, send notifications
-                    //  if filter have less than 10l of its efficiency until expiration.
-                    if (xChannel3 == howMuchToFilterLeft) {
-                        notificationCh3FilterEfficiencyWater();
-                        xChannel3 = xChannel3 - 2;
-                        myServicePrefsEditor.putInt("xChannel3", xChannel3).apply();
-                    }
-                    handler.postDelayed(this, delay);
-                }
-            }, delay);
+            // Send notifications for the last 3 days of filter usage user set date
+            if (xChannel1 == daysToFilterChangeCounting && timeHour == 18) {
+                notificationCh1DaysLeft();
+                xChannel1--;
+                myServicePrefsEditor.putInt("xChannel1", xChannel1).apply();
+            }
+            // Every hour check if user consumed settled amount of water, if not, send notification
+            if (howMuchToDrink > 0 && timeHour >= 8 && timeHour <= 18 &&
+                    timeMinute == 0 && timeSecond == 1) {
+                notificationCh2DrinkReminder();
+            }
+        }
+        // Check if filter still can filter some water based on it efficiency, send notifications
+        //  if filter have less than 10l of its efficiency until expiration.
+        if (xChannel3 == howMuchToFilterLeft) {
+            notificationCh3FilterEfficiencyWater();
+            xChannel3 = xChannel3 - 2;
+            myServicePrefsEditor.putInt("xChannel3", xChannel3).apply();
         }
     }
 
