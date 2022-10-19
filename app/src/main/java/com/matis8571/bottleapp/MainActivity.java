@@ -278,8 +278,6 @@ public class MainActivity extends AppCompatActivity {
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
         int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
