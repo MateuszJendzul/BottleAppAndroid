@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.matis8571.bottleapp">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -28,7 +31,9 @@
             android:name=".WaterConsumptionTip"
             android:theme="@style/AppTheme.TranslucentBorders" />
 
-        <receiver android:name=".MyReceiver" />
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true" />
 
     </application>
 

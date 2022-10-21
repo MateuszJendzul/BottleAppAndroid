@@ -182,23 +182,28 @@ public class MainActivity extends AppCompatActivity {
      */
     private void reminderNotificationChannel1() {
         Log.d(TAG, "onCall: reminderNotificationChannel1");
-        MyService myService = new MyService(this);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getApplicationContext().getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
         int xChannel1 = mainPrefsReceiver.getInt("xChannel1", 3);
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
 
-        // Send notifications for the last 3 days of filter usage user set date
         if (xChannel1 == daysToFilterChangeCounting) {
+            Log.d(TAG, "ifPassed: reminderNotificationChannel1");
+            NotificationUtils notificationUtils = new NotificationUtils(this);
+
             Calendar alarmAt19Ch1 = Calendar.getInstance();
             alarmAt19Ch1.setTimeInMillis(System.currentTimeMillis());
             alarmAt19Ch1.set(Calendar.HOUR_OF_DAY, 19);
             alarmAt19Ch1.set(Calendar.MINUTE, 0);
             alarmAt19Ch1.set(Calendar.SECOND, 1);
-            myService.setReminder(alarmAt19Ch1, currentDateCalendar);
+            if (currentDateCalendar.after(alarmAt19Ch1)) {
+                Log.d("Hey","Added a day");
+                alarmAt19Ch1.add(Calendar.DATE, 1);
+            }
 
+            notificationUtils.setReminderCh1(alarmAt19Ch1);
             xChannel1--;
             mainPrefsEditor.putInt("xChannel1", xChannel1).apply();
         }
@@ -211,57 +216,64 @@ public class MainActivity extends AppCompatActivity {
      */
     private void reminderNotificationChannel2() {
         Log.d(TAG, "onCall: reminderNotificationChannel2");
-        MyService myService = new MyService(this);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-
-        int savedDay = mainPrefsReceiver.getInt("savedDay", 0);
-        if (savedDay != getDay()) {
-            SharedPreferences mainPrefs = getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-            SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-            mainPrefsEditor.putInt("savedDay", getDay()).apply();
-            mainPrefsEditor.putBoolean("addedToday", true).apply();
-        }
+        NotificationUtils notificationUtils = new NotificationUtils(this);
         int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
-        boolean addedToday = mainPrefsReceiver.getBoolean("addedToday", false);
+        if (howMuchToDrink > 0) {
+            Log.d(TAG, "ifPassed: reminderNotificationChannel2");
 
-        if (howMuchToDrink > 0 && addedToday) {
             //Setup new calendar time to later build notification using it
             Calendar alarmAt10Ch2 = Calendar.getInstance();
             alarmAt10Ch2.setTimeInMillis(System.currentTimeMillis());
             alarmAt10Ch2.set(Calendar.HOUR_OF_DAY, 10);
             alarmAt10Ch2.set(Calendar.MINUTE, 0);
             alarmAt10Ch2.set(Calendar.SECOND, 1);
-            //Call method to create notification using specified calendar time
-            myService.setReminder(alarmAt10Ch2, currentDateCalendar);
 
             Calendar alarmAt12Ch2 = Calendar.getInstance();
             alarmAt12Ch2.setTimeInMillis(System.currentTimeMillis());
             alarmAt12Ch2.set(Calendar.HOUR_OF_DAY, 12);
             alarmAt12Ch2.set(Calendar.MINUTE, 0);
             alarmAt12Ch2.set(Calendar.SECOND, 1);
-            myService.setReminder(alarmAt12Ch2, currentDateCalendar);
 
             Calendar alarmAt14Ch2 = Calendar.getInstance();
             alarmAt14Ch2.setTimeInMillis(System.currentTimeMillis());
             alarmAt14Ch2.set(Calendar.HOUR_OF_DAY, 14);
             alarmAt14Ch2.set(Calendar.MINUTE, 0);
             alarmAt14Ch2.set(Calendar.SECOND, 1);
-            myService.setReminder(alarmAt14Ch2, currentDateCalendar);
 
             Calendar alarmAt16Ch2 = Calendar.getInstance();
             alarmAt16Ch2.setTimeInMillis(System.currentTimeMillis());
             alarmAt16Ch2.set(Calendar.HOUR_OF_DAY, 16);
             alarmAt16Ch2.set(Calendar.MINUTE, 0);
             alarmAt16Ch2.set(Calendar.SECOND, 1);
-            myService.setReminder(alarmAt16Ch2, currentDateCalendar);
 
             Calendar alarmAt18Ch2 = Calendar.getInstance();
             alarmAt18Ch2.setTimeInMillis(System.currentTimeMillis());
             alarmAt18Ch2.set(Calendar.HOUR_OF_DAY, 18);
             alarmAt18Ch2.set(Calendar.MINUTE, 0);
             alarmAt18Ch2.set(Calendar.SECOND, 1);
-            myService.setReminder(alarmAt18Ch2, currentDateCalendar);
+
+            if (currentDateCalendar.after(alarmAt10Ch2)) {
+                Log.d(TAG,"alarmAt10Ch2: added a day");
+                alarmAt10Ch2.add(Calendar.DATE, 1);
+            } else if (currentDateCalendar.after(alarmAt12Ch2)) {
+                Log.d(TAG,"alarmAt12Ch2: added a day");
+                alarmAt12Ch2.add(Calendar.DATE, 1);
+            } else if (currentDateCalendar.after(alarmAt14Ch2)) {
+                Log.d(TAG,"alarmAt14Ch2: added a day");
+                alarmAt14Ch2.add(Calendar.DATE, 1);
+            } else if (currentDateCalendar.after(alarmAt16Ch2)) {
+                Log.d(TAG,"alarmAt16Ch2: added a day");
+                alarmAt16Ch2.add(Calendar.DATE, 1);
+            } else if (currentDateCalendar.after(alarmAt18Ch2)) {
+                Log.d(TAG,"alarmAt18Ch2: added a day");
+                alarmAt18Ch2.add(Calendar.DATE, 1);
+            }
+
+            //Call method to create notification using specified calendar time
+            notificationUtils.setReminderCh2(alarmAt10Ch2, alarmAt12Ch2, alarmAt14Ch2,
+                    alarmAt16Ch2, alarmAt18Ch2);
         }
     }
 
@@ -273,22 +285,29 @@ public class MainActivity extends AppCompatActivity {
      */
     private void reminderNotificationChannel3() {
         Log.d(TAG, "onCall: reminderNotificationChannel3");
-        MyService myService = new MyService(this);
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
-        int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
+        int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
         int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
 
         if (howMuchToFilterLeft <= 10) {
-            Calendar alarmAt18Ch2 = Calendar.getInstance();
-            alarmAt18Ch2.setTimeInMillis(System.currentTimeMillis());
-            alarmAt18Ch2.set(Calendar.HOUR_OF_DAY, 19);
-            alarmAt18Ch2.set(Calendar.MINUTE, 0);
-            alarmAt18Ch2.set(Calendar.SECOND, 1);
-            myService.setReminder(alarmAt18Ch2, currentDateCalendar);
+            Log.d(TAG, "ifPassed: reminderNotificationChannel3");
+            NotificationUtils notificationUtils = new NotificationUtils(this);
+
+            Calendar alarmAt19Ch3 = Calendar.getInstance();
+            alarmAt19Ch3.setTimeInMillis(System.currentTimeMillis());
+            alarmAt19Ch3.set(Calendar.HOUR_OF_DAY, 19);
+            alarmAt19Ch3.set(Calendar.MINUTE, 0);
+            alarmAt19Ch3.set(Calendar.SECOND, 1);
+            if (currentDateCalendar.after(alarmAt19Ch3)) {
+                Log.d("Hey","Added a day");
+                alarmAt19Ch3.add(Calendar.DATE, 1);
+            }
+
+            notificationUtils.setReminderCh3(alarmAt19Ch3);
         }
     }
 
@@ -559,5 +578,4 @@ public class MainActivity extends AppCompatActivity {
     private int getYear() {
         return currentDateCalendar.get(Calendar.YEAR);
     }
-
 }

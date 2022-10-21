@@ -16,34 +16,61 @@ import androidx.core.app.NotificationCompat;
 
 import java.util.Calendar;
 
-public class MyService extends ContextWrapper {
+public class NotificationUtils extends ContextWrapper {
     private static final String TAG = "MyService";
     public static final String CHANNEL_1_ID = "channel1";
     public static final String CHANNEL_2_ID = "channel2";
     public static final String CHANNEL_3_ID = "channel3";
     private NotificationManager notificationManager;
     private Context context;
-    Calendar calendar = Calendar.getInstance();
 
-    public MyService(Context base) {
+    public NotificationUtils(Context base) {
         super(base);
         context = base;
         Log.d(TAG, "Starting");
         createNotificationChannels();
     }
 
-    public void setReminder(Calendar setDate) {
+    public void setReminderCh1(Calendar setDate) {
         Intent intent = new Intent(context, MyReceiver.class);
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent =
-                PendingIntent.getBroadcast(context, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                PendingIntent.getBroadcast(context, 1, intent, 0);
+        AlarmManager alarmManagerCh1 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerCh1.set(AlarmManager.RTC_WAKEUP, setDate.getTimeInMillis(), pendingIntent);
+        Log.d(TAG, "setReminder: " + setDate + " added notification");
+    }
 
-        if (dateNow.after(setDate)) {
-            Log.d(TAG, "Added a day");
-            setDate.add(Calendar.DATE, 1);
-        }
-        alarmManager.set(AlarmManager.RTC_WAKEUP, setDate.getTimeInMillis(), pendingIntent);
-        Log.d(TAG, "setReminder: " + setDate + " added notification at channel2");
+    @SuppressLint("UnspecifiedImmutableFlag")
+    public void setReminderCh2(Calendar setDate1, Calendar setDate2, Calendar setDate3,
+                               Calendar setDate4, Calendar setDate5) {
+        Intent intent = new Intent(context, MyReceiver.class);
+        PendingIntent pendingIntentCh2_1 = PendingIntent.getBroadcast(context, 2_1, intent, 0);
+        PendingIntent pendingIntentCh2_2 = PendingIntent.getBroadcast(context, 2_2, intent, 0);
+        PendingIntent pendingIntentCh2_3 = PendingIntent.getBroadcast(context, 2_3, intent, 0);
+        PendingIntent pendingIntentCh2_4 = PendingIntent.getBroadcast(context, 2_4, intent, 0);
+        PendingIntent pendingIntentCh2_5 = PendingIntent.getBroadcast(context, 2_5, intent, 0);
+        AlarmManager alarmManagerCh2_1 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManagerCh2_2 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManagerCh2_3 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManagerCh2_4 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmManager alarmManagerCh2_5 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerCh2_1.set(AlarmManager.RTC_WAKEUP, setDate1.getTimeInMillis(), pendingIntentCh2_1);
+        alarmManagerCh2_2.set(AlarmManager.RTC_WAKEUP, setDate2.getTimeInMillis(), pendingIntentCh2_2);
+        alarmManagerCh2_3.set(AlarmManager.RTC_WAKEUP, setDate3.getTimeInMillis(), pendingIntentCh2_3);
+        alarmManagerCh2_4.set(AlarmManager.RTC_WAKEUP, setDate4.getTimeInMillis(), pendingIntentCh2_4);
+        alarmManagerCh2_5.set(AlarmManager.RTC_WAKEUP, setDate5.getTimeInMillis(), pendingIntentCh2_5);
+        Log.d(TAG, "setReminder:\n" + setDate1 + " added notification\n" + setDate2 +
+                " added notification\n" + setDate3 + " added notification\n" + setDate4 +
+                " added notification\n" + setDate5 + " added notification");
+    }
+
+    public void setReminderCh3(Calendar setDate) {
+        Intent intent = new Intent(context, MyReceiver.class);
+        @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent =
+                PendingIntent.getBroadcast(context, 3, intent, 0);
+        AlarmManager alarmManagerCh3 = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManagerCh3.set(AlarmManager.RTC_WAKEUP, setDate.getTimeInMillis(), pendingIntent);
+        Log.d(TAG, "setReminder: " + setDate + " added notification");
     }
 
     public NotificationManager getManager() {

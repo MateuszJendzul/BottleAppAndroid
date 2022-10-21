@@ -13,7 +13,7 @@ public class MyReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        MyService myService = new MyService(context);
+        NotificationUtils notificationUtils = new NotificationUtils(context);
         Log.d(TAG, "onReceive: Starting");
 
         SharedPreferences mainPrefsReceiver = context.getSharedPreferences(
@@ -47,15 +47,15 @@ public class MyReceiver extends BroadcastReceiver {
             textCh3 = "Used up " + filterEfficiencyCountingProjection + "l ago, change it today!";
         }
 
-        NotificationCompat.Builder builderCh1 = myService.notificationCh1DaysLeft(
+        NotificationCompat.Builder builderCh1 = notificationUtils.notificationCh1DaysLeft(
                 "Filter", textCh1);
-        NotificationCompat.Builder builderCh2 = myService.notificationCh2DrinkReminder(
+        NotificationCompat.Builder builderCh2 = notificationUtils.notificationCh2DrinkReminder(
                 "Drink water!", textCh2);
-        NotificationCompat.Builder builderCh3 = myService.notificationCh3FilterEfficiencyWater(
+        NotificationCompat.Builder builderCh3 = notificationUtils.notificationCh3FilterEfficiencyWater(
                 "Filter", textCh3);
 
         if (howMuchToDrink > 0) {
-            myService.getManager().notify(2, builderCh2.build());
+            notificationUtils.getManager().notify(2, builderCh2.build());
         }
     }
 }
