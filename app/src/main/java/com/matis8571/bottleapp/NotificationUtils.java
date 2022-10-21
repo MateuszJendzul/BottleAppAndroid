@@ -9,11 +9,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
@@ -35,10 +32,10 @@ public class MyService extends ContextWrapper {
         createNotificationChannels();
     }
 
-    public void setReminder(Calendar setDate, Calendar dateNow) {
+    public void setReminder(Calendar setDate) {
         Intent intent = new Intent(context, MyReceiver.class);
         @SuppressLint("UnspecifiedImmutableFlag") PendingIntent pendingIntent =
-                PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getBroadcast(context, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
         if (dateNow.after(setDate)) {
@@ -46,7 +43,7 @@ public class MyService extends ContextWrapper {
             setDate.add(Calendar.DATE, 1);
         }
         alarmManager.set(AlarmManager.RTC_WAKEUP, setDate.getTimeInMillis(), pendingIntent);
-        Log.d(TAG, "setReminderDailyInterval: " + setDate + " added notification at channel2");
+        Log.d(TAG, "setReminder: " + setDate + " added notification at channel2");
     }
 
     public NotificationManager getManager() {
@@ -129,29 +126,4 @@ public class MyService extends ContextWrapper {
             getManager().createNotificationChannel(channel3);
         }
     }
-
-//    private int getTimeHours(){
-//        return calendar.get(Calendar.HOUR_OF_DAY);
-//    }
-//
-//    private int getTimeMinutes(){
-//        return calendar.get(Calendar.MINUTE);
-//    }
-//
-//    private int getTimeSeconds (){
-//        return calendar.get(Calendar.SECOND);
-//    }
-//
-//    private int getDay(){
-//        return calendar.get(Calendar.DAY_OF_MONTH);
-//    }
-//
-//    private int getMonth(){
-//        return calendar.get(Calendar.MONTH) + 1;
-//    }
-//
-//    private int getYear(){
-//        return calendar.get(Calendar.YEAR);
-//    }
-
 }
