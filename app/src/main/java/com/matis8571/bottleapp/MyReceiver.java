@@ -20,6 +20,10 @@ public class MyReceiver extends BroadcastReceiver {
                 "mainPrefs", Context.MODE_PRIVATE);
         SharedPreferences userProfilePrefsReceiver = context.getSharedPreferences(
                 "userProfilePrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = context.getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int xChannel1 = mainPrefsReceiver.getInt("xChannel1", 3);
+        int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
         int countDaysToFilterChange = mainPrefsReceiver.getInt("countDaysToFilterChange", 0);
         int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
@@ -47,15 +51,29 @@ public class MyReceiver extends BroadcastReceiver {
             textCh3 = "Used up " + filterEfficiencyCountingProjection + "l ago, change it today!";
         }
 
-        NotificationCompat.Builder builderCh1 = notificationUtils.notificationCh1DaysLeft(
-                "Filter", textCh1);
-        NotificationCompat.Builder builderCh2 = notificationUtils.notificationCh2DrinkReminder(
-                "Drink water!", textCh2);
-        NotificationCompat.Builder builderCh3 = notificationUtils.notificationCh3FilterEfficiencyWater(
-                "Filter", textCh3);
+        if (xChannel1 == daysToFilterChangeCounting) {
+            Log.d(TAG, "ifPassed: reminderNotificationChannel1");
+            NotificationCompat.Builder builderCh1 = notificationUtils.notificationCh1DaysLeft(
+                    "Filter", textCh1);
+            notificationUtils.getManager().notify(1, builderCh1.build());
+            xChannel1--;
+            mainPrefsEditor.putInt("xChannel1", xChannel1).apply();
+
+        }
 
         if (howMuchToDrink > 0) {
+            Log.d(TAG, "ifPassed: reminderNotificationChannel2");
+            NotificationCompat.Builder builderCh2 = notificationUtils.notificationCh2DrinkReminder(
+                    "Drink water!", textCh2);
             notificationUtils.getManager().notify(2, builderCh2.build());
+
+        }
+
+        if (howMuchToFilterLeft <= 10) {
+            Log.d(TAG, "ifPassed: reminderNotificationChannel3");
+            NotificationCompat.Builder builderCh3 = notificationUtils.notificationCh3FilterEfficiencyWater(
+                    "Filter", textCh3);
+            notificationUtils.getManager().notify(3, builderCh3.build());
         }
     }
 }

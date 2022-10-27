@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity {
         countToFilterEfficiency();
         countDaysToFilterChange();
         userChangeAfterDaysFilterReset();
-        reminderNotificationChannel1();
-        reminderNotificationChannel2();
-        reminderNotificationChannel3();
+        dailyNotificationsCall();
 
         SharedPreferences filterPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "filterPrefs", Context.MODE_PRIVATE);
@@ -76,7 +74,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         showInMainWaterDrunkText.setText("Today: " + waterTodayMain + "ml");
-        daysToChangeFilterMainText.setText("Days left to filter change: " + daysToFilterChangeCounting);
+        if (daysToFilterChangeCounting < 0) {
+            daysToChangeFilterMainText.setText("Days left to filter change: " + 0);
+        } else {
+            daysToChangeFilterMainText.setText("Days left to filter change: " + daysToFilterChangeCounting);
+        }
         welcomeText.setText("Welcome to your Bottle Application!");
         profileSetupText.setText("Edit profile:");
         showProfileText.setText("Show profile:");
@@ -182,99 +184,81 @@ public class MainActivity extends AppCompatActivity {
      */
     private void reminderNotificationChannel1() {
         Log.d(TAG, "onCall: reminderNotificationChannel1");
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefs = getApplicationContext().getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
-        int xChannel1 = mainPrefsReceiver.getInt("xChannel1", 3);
-        int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
+        NotificationUtils notificationUtils = new NotificationUtils(this);
 
-        if (xChannel1 == daysToFilterChangeCounting) {
-            Log.d(TAG, "ifPassed: reminderNotificationChannel1");
-            NotificationUtils notificationUtils = new NotificationUtils(this);
-
-            Calendar alarmAt19Ch1 = Calendar.getInstance();
-            alarmAt19Ch1.setTimeInMillis(System.currentTimeMillis());
-            alarmAt19Ch1.set(Calendar.HOUR_OF_DAY, 19);
-            alarmAt19Ch1.set(Calendar.MINUTE, 0);
-            alarmAt19Ch1.set(Calendar.SECOND, 1);
-            if (currentDateCalendar.after(alarmAt19Ch1)) {
-                Log.d("Hey","Added a day");
-                alarmAt19Ch1.add(Calendar.DATE, 1);
-            }
-
-            notificationUtils.setReminderCh1(alarmAt19Ch1);
-            xChannel1--;
-            mainPrefsEditor.putInt("xChannel1", xChannel1).apply();
+        Calendar alarmAt19Ch1 = Calendar.getInstance();
+        alarmAt19Ch1.setTimeInMillis(System.currentTimeMillis());
+        alarmAt19Ch1.set(Calendar.HOUR_OF_DAY, 19);
+        alarmAt19Ch1.set(Calendar.MINUTE, 0);
+        alarmAt19Ch1.set(Calendar.SECOND, 1);
+        if (currentDateCalendar.after(alarmAt19Ch1)) {
+            Log.d("Hey", "Added a day");
+            alarmAt19Ch1.add(Calendar.DATE, 1);
         }
+
+        notificationUtils.setReminderCh1(alarmAt19Ch1);
     }
 
     /**
-     * Use to add notifications on channel2 created in MyService.class. Add only once a day
+     * Use to add notification on channel2 created in MyService.class. Add only once a day
      * (to prevent adding again same notifications every time user re opens app).
      * Every 2 hours (10-18) check if user consumed settled amount of water, if not, set to notify.
      */
     private void reminderNotificationChannel2() {
         Log.d(TAG, "onCall: reminderNotificationChannel2");
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
         NotificationUtils notificationUtils = new NotificationUtils(this);
-        int howMuchToDrink = mainPrefsReceiver.getInt("howMuchToDrink", 0);
-        if (howMuchToDrink > 0) {
-            Log.d(TAG, "ifPassed: reminderNotificationChannel2");
 
-            //Setup new calendar time to later build notification using it
-            Calendar alarmAt10Ch2 = Calendar.getInstance();
-            alarmAt10Ch2.setTimeInMillis(System.currentTimeMillis());
-            alarmAt10Ch2.set(Calendar.HOUR_OF_DAY, 10);
-            alarmAt10Ch2.set(Calendar.MINUTE, 0);
-            alarmAt10Ch2.set(Calendar.SECOND, 1);
+        //Setup new calendar time to later build notification using it
+        Calendar alarmAt10Ch2 = Calendar.getInstance();
+        alarmAt10Ch2.setTimeInMillis(System.currentTimeMillis());
+        alarmAt10Ch2.set(Calendar.HOUR_OF_DAY, 10);
+        alarmAt10Ch2.set(Calendar.MINUTE, 0);
+        alarmAt10Ch2.set(Calendar.SECOND, 1);
 
-            Calendar alarmAt12Ch2 = Calendar.getInstance();
-            alarmAt12Ch2.setTimeInMillis(System.currentTimeMillis());
-            alarmAt12Ch2.set(Calendar.HOUR_OF_DAY, 12);
-            alarmAt12Ch2.set(Calendar.MINUTE, 0);
-            alarmAt12Ch2.set(Calendar.SECOND, 1);
+        Calendar alarmAt12Ch2 = Calendar.getInstance();
+        alarmAt12Ch2.setTimeInMillis(System.currentTimeMillis());
+        alarmAt12Ch2.set(Calendar.HOUR_OF_DAY, 12);
+        alarmAt12Ch2.set(Calendar.MINUTE, 0);
+        alarmAt12Ch2.set(Calendar.SECOND, 1);
 
-            Calendar alarmAt14Ch2 = Calendar.getInstance();
-            alarmAt14Ch2.setTimeInMillis(System.currentTimeMillis());
-            alarmAt14Ch2.set(Calendar.HOUR_OF_DAY, 14);
-            alarmAt14Ch2.set(Calendar.MINUTE, 0);
-            alarmAt14Ch2.set(Calendar.SECOND, 1);
+        Calendar alarmAt14Ch2 = Calendar.getInstance();
+        alarmAt14Ch2.setTimeInMillis(System.currentTimeMillis());
+        alarmAt14Ch2.set(Calendar.HOUR_OF_DAY, 14);
+        alarmAt14Ch2.set(Calendar.MINUTE, 0);
+        alarmAt14Ch2.set(Calendar.SECOND, 1);
 
-            Calendar alarmAt16Ch2 = Calendar.getInstance();
-            alarmAt16Ch2.setTimeInMillis(System.currentTimeMillis());
-            alarmAt16Ch2.set(Calendar.HOUR_OF_DAY, 16);
-            alarmAt16Ch2.set(Calendar.MINUTE, 0);
-            alarmAt16Ch2.set(Calendar.SECOND, 1);
+        Calendar alarmAt16Ch2 = Calendar.getInstance();
+        alarmAt16Ch2.setTimeInMillis(System.currentTimeMillis());
+        alarmAt16Ch2.set(Calendar.HOUR_OF_DAY, 16);
+        alarmAt16Ch2.set(Calendar.MINUTE, 0);
+        alarmAt16Ch2.set(Calendar.SECOND, 1);
 
-            Calendar alarmAt18Ch2 = Calendar.getInstance();
-            alarmAt18Ch2.setTimeInMillis(System.currentTimeMillis());
-            alarmAt18Ch2.set(Calendar.HOUR_OF_DAY, 18);
-            alarmAt18Ch2.set(Calendar.MINUTE, 0);
-            alarmAt18Ch2.set(Calendar.SECOND, 1);
+        Calendar alarmAt18Ch2 = Calendar.getInstance();
+        alarmAt18Ch2.setTimeInMillis(System.currentTimeMillis());
+        alarmAt18Ch2.set(Calendar.HOUR_OF_DAY, 18);
+        alarmAt18Ch2.set(Calendar.MINUTE, 0);
+        alarmAt18Ch2.set(Calendar.SECOND, 1);
 
-            if (currentDateCalendar.after(alarmAt10Ch2)) {
-                Log.d(TAG,"alarmAt10Ch2: added a day");
-                alarmAt10Ch2.add(Calendar.DATE, 1);
-            } else if (currentDateCalendar.after(alarmAt12Ch2)) {
-                Log.d(TAG,"alarmAt12Ch2: added a day");
-                alarmAt12Ch2.add(Calendar.DATE, 1);
-            } else if (currentDateCalendar.after(alarmAt14Ch2)) {
-                Log.d(TAG,"alarmAt14Ch2: added a day");
-                alarmAt14Ch2.add(Calendar.DATE, 1);
-            } else if (currentDateCalendar.after(alarmAt16Ch2)) {
-                Log.d(TAG,"alarmAt16Ch2: added a day");
-                alarmAt16Ch2.add(Calendar.DATE, 1);
-            } else if (currentDateCalendar.after(alarmAt18Ch2)) {
-                Log.d(TAG,"alarmAt18Ch2: added a day");
-                alarmAt18Ch2.add(Calendar.DATE, 1);
-            }
-
-            //Call method to create notification using specified calendar time
-            notificationUtils.setReminderCh2(alarmAt10Ch2, alarmAt12Ch2, alarmAt14Ch2,
-                    alarmAt16Ch2, alarmAt18Ch2);
+        if (currentDateCalendar.after(alarmAt10Ch2)) {
+            Log.d(TAG, "alarmAt10Ch2: added a day");
+            alarmAt10Ch2.add(Calendar.DATE, 1);
+        } else if (currentDateCalendar.after(alarmAt12Ch2)) {
+            Log.d(TAG, "alarmAt12Ch2: added a day");
+            alarmAt12Ch2.add(Calendar.DATE, 1);
+        } else if (currentDateCalendar.after(alarmAt14Ch2)) {
+            Log.d(TAG, "alarmAt14Ch2: added a day");
+            alarmAt14Ch2.add(Calendar.DATE, 1);
+        } else if (currentDateCalendar.after(alarmAt16Ch2)) {
+            Log.d(TAG, "alarmAt16Ch2: added a day");
+            alarmAt16Ch2.add(Calendar.DATE, 1);
+        } else if (currentDateCalendar.after(alarmAt18Ch2)) {
+            Log.d(TAG, "alarmAt18Ch2: added a day");
+            alarmAt18Ch2.add(Calendar.DATE, 1);
         }
+
+        //Call method to create notification using specified calendar time
+        notificationUtils.setReminderCh2(alarmAt10Ch2, alarmAt12Ch2, alarmAt14Ch2,
+                alarmAt16Ch2, alarmAt18Ch2);
     }
 
     /**
@@ -285,30 +269,19 @@ public class MainActivity extends AppCompatActivity {
      */
     private void reminderNotificationChannel3() {
         Log.d(TAG, "onCall: reminderNotificationChannel3");
-        SharedPreferences userProfilePrefsReceiver = getApplicationContext().getSharedPreferences(
-                "userProfilePrefs", Context.MODE_PRIVATE);
-        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
-                "mainPrefs", Context.MODE_PRIVATE);
-        int filterEfficiency = userProfilePrefsReceiver.getInt("filterEfficiency", 0);
-        int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
-        int howMuchToFilterLeft = filterEfficiency - (filterEfficiencyCounting / 1000);
+        NotificationUtils notificationUtils = new NotificationUtils(this);
 
-        if (howMuchToFilterLeft <= 10) {
-            Log.d(TAG, "ifPassed: reminderNotificationChannel3");
-            NotificationUtils notificationUtils = new NotificationUtils(this);
-
-            Calendar alarmAt19Ch3 = Calendar.getInstance();
-            alarmAt19Ch3.setTimeInMillis(System.currentTimeMillis());
-            alarmAt19Ch3.set(Calendar.HOUR_OF_DAY, 19);
-            alarmAt19Ch3.set(Calendar.MINUTE, 0);
-            alarmAt19Ch3.set(Calendar.SECOND, 1);
-            if (currentDateCalendar.after(alarmAt19Ch3)) {
-                Log.d("Hey","Added a day");
-                alarmAt19Ch3.add(Calendar.DATE, 1);
-            }
-
-            notificationUtils.setReminderCh3(alarmAt19Ch3);
+        Calendar alarmAt19Ch3 = Calendar.getInstance();
+        alarmAt19Ch3.setTimeInMillis(System.currentTimeMillis());
+        alarmAt19Ch3.set(Calendar.HOUR_OF_DAY, 19);
+        alarmAt19Ch3.set(Calendar.MINUTE, 0);
+        alarmAt19Ch3.set(Calendar.SECOND, 1);
+        if (currentDateCalendar.after(alarmAt19Ch3)) {
+            Log.d("Hey", "Added a day");
+            alarmAt19Ch3.add(Calendar.DATE, 1);
         }
+
+        notificationUtils.setReminderCh3(alarmAt19Ch3);
     }
 
     /**
@@ -362,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Reset to default (provided by user when editing profile) properties responsible for
-        // counting daily consumed water
+        // counting daily consumed water, if states that body will be called only once a day
         if (x != getDay()) {
             addToDaysCounter();
             mainPrefsReceiver.edit().remove("bottlesDone").apply();
@@ -383,6 +356,32 @@ public class MainActivity extends AppCompatActivity {
             mainPrefsReceiver.edit().remove("bottlesDoneExtendedToEfficiency").apply();
             mainPrefsReceiver.edit().remove("bottlesDoneToEfficiency").apply();
             myServicePrefsReceiver.edit().remove("xChannel3").apply();
+        }
+    }
+
+    private void dailyNotificationsCall() {
+        Log.d(TAG, "onCall: dailyNotificationsCall");
+        SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
+                "mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences mainPrefs = getApplicationContext().getSharedPreferences("mainPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mainPrefsEditor = mainPrefs.edit();
+        int dayToDailyBlock = mainPrefsReceiver.getInt("dayToDailyBlock", 0);
+
+        if (dayToDailyBlock != getDay()) {
+            mainPrefsEditor.putBoolean("ch2DailyBlock", true).apply();
+        } else if (dayToDailyBlock == getDay()) {
+            mainPrefsEditor.putBoolean("ch2DailyBlock", false).apply();
+        }
+
+        boolean ch2DailyBlock = mainPrefsReceiver.getBoolean("ch2DailyBlock", true);
+        if (ch2DailyBlock) {
+            Log.d(TAG, "ifPassed: dailyNotificationsCall");
+            reminderNotificationChannel1();
+            reminderNotificationChannel2();
+            reminderNotificationChannel3();
+
+            dayToDailyBlock = getDay();
+            mainPrefsEditor.putInt("dayToDailyBlock", dayToDailyBlock).apply();
         }
     }
 
