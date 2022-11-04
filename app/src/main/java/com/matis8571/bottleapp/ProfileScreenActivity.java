@@ -50,8 +50,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
                 "filterPrefs", Context.MODE_PRIVATE);
         SharedPreferences mainPrefsReceiver = getApplicationContext().getSharedPreferences(
                 "mainPrefs", Context.MODE_PRIVATE);
-        SharedPreferences myServicePrefsReceiver = getApplicationContext().getSharedPreferences(
-                "myServicePrefs", Context.MODE_PRIVATE);
 
         String profileName = userProfilePrefsReceiver.getString("profileName", null);
         int userWeight = userProfilePrefsReceiver.getInt("userWeight", 0);
@@ -64,11 +62,6 @@ public class ProfileScreenActivity extends AppCompatActivity {
         int daysToFilterChangeCounting = mainPrefsReceiver.getInt("daysToFilterChangeCounting", 0);
         int filterEfficiencyCounting = mainPrefsReceiver.getInt("filterEfficiencyCounting", 0);
         double filterEfficiencyCountingProjection = (filterEfficiency - (double) filterEfficiencyCounting / 1000);
-
-        String filterMonth = filterPrefsReceiver.getString("filterMonth", null);
-        int savedMonth = Integer.parseInt(filterMonth);
-        String filterDay = filterPrefsReceiver.getString("filterDay", null);
-        int savedDay = Integer.parseInt(filterDay);
 
         SharedPreferences profilePrefs = getSharedPreferences("profilePrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor profilePrefsEditor = profilePrefs.edit();

@@ -22,7 +22,7 @@ public class NotificationUtils extends ContextWrapper {
     public static final String CHANNEL_2_ID = "channel2";
     public static final String CHANNEL_3_ID = "channel3";
     private NotificationManager notificationManager;
-    private Context context;
+    private final Context context;
 
     public NotificationUtils(Context base) {
         super(base);
